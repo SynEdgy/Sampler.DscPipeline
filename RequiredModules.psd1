@@ -3,13 +3,13 @@
         AddToPath  = $true
         Target     = 'output\RequiredModules'
         Parameters = @{
-           Repository = 'PSGallery'
+            Repository = 'PSGallery'
         }
     }
 
     InvokeBuild                 = 'latest'
     PSScriptAnalyzer            = 'latest'
-    Pester                      = '4.10.1'
+    Pester                      = 'latest'
     Plaster                     = 'latest'
     ModuleBuilder               = 'latest'
     ChangelogManagement         = 'latest'
@@ -21,5 +21,5 @@
     'DscResource.AnalyzerRules' = 'latest'
     xDscResourceDesigner        = 'latest'
     'DscResource.DocGenerator'  = 'latest'
+    'Datum'                     = 'latest'
 }
-
