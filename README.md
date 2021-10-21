@@ -39,8 +39,7 @@ documentation on each PR merge.
 
 ### Examples
 
-You can review the [Examples](/source/Examples) directory in the Sampler.DscPipeline module
+You can review the [DSC Pipeline project](https://github.com/SynEdgy/DscPipeline) directory in the Sampler.DscPipeline module
 for some general use scenarios for all of the resources that are in the module.
 
 The resource examples are also available in the [Sampler.DscPipeline Wiki](https://github.com/dsccommunity/Sampler.DscPipeline/wiki).
-

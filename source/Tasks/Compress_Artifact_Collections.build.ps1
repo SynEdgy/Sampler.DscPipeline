@@ -42,13 +42,13 @@ param
 
 Task Compress_Artifact_Collections {
     . Set-SamplerTaskVariable -AsNewBuild
-    
+
     $RsopFolder = Get-SamplerAbsolutePath -Path $RsopFolder -RelativeTo $OutputDirectory
     $MofOutputFolder = Get-SamplerAbsolutePath -Path $MofOutputFolder -RelativeTo $OutputDirectory
     $MetaMofOutputFolder = Get-SamplerAbsolutePath -Path $MetaMofOutputFolder -RelativeTo $OutputDirectory
     $CompressedArtifactsFolder = Get-SamplerAbsolutePath -Path $CompressedArtifactsFolder -RelativeTo $OutputDirectory
     $CompressedModulesFolder = Get-SamplerAbsolutePath -Path $CompressedModulesFolder -RelativeTo $OutputDirectory
-    
+
         "`tRsopFolder                 = $RsopFolder"
         "`tMofOutputFolder            = $MofOutputFolder"
         "`tMetaMofOutputFolder        = $MetaMofOutputFolder"
@@ -57,7 +57,7 @@ Task Compress_Artifact_Collections {
 
     if (-not (Test-Path -Path $CompressedArtifactsFolder))
     {
-        $null = New-Item -ItemType Directory $CompressedArtifactsFolder    
+        $null = New-Item -ItemType Directory $CompressedArtifactsFolder
     }
 
     Write-Build White "Starting deployment with files from '$OutputDirectory'"

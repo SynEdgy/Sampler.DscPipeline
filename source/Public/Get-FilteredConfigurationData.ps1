@@ -1,6 +1,7 @@
 function Get-FilteredConfigurationData
 {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param
     (
         [Parameter()]
@@ -25,11 +26,11 @@ function Get-FilteredConfigurationData
         $Filter = {}
     }
 
-    $allDatumNodes = [System.Collections.Hashtable[]]@(Get-DatumNodesRecursive)
+    $allDatumNodes = [System.Collections.Hashtable[]]@(Get-DatumNodesRecursive -AllDatumNodes $Datum.AllNodes)
     $totalNodeCount = $allDatumNodes.Count
-    
+
     Write-Verbose -Message "Node count: $($allDatumNodes.Count)"
-    
+
     if ($Filter.ToString() -ne {}.ToString())
     {
         Write-Verbose -Message "Filter: $($Filter.ToString())"
