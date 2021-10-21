@@ -34,7 +34,7 @@ param
 
 task CompressModulesWithChecksum {
     . Set-SamplerTaskVariable -AsNewBuild
-    
+
     $CompressedModulesFolder = Get-SamplerAbsolutePath -Path $CompressedModulesFolder -RelativeTo $OutputDirectory
     $RequiredModulesDirectory = Get-SamplerAbsolutePath -Path $RequiredModulesDirectory -RelativeTo $OutputDirectory
 
@@ -51,15 +51,14 @@ task CompressModulesWithChecksum {
 
     if ($SkipCompressedModulesBuild)
     {
-        Write-Host 'Skipping preparation of Compressed Modules as $SkipCompressedModulesBuild is set'
+        Write-Build Yellow 'Skipping preparation of Compressed Modules as $SkipCompressedModulesBuild is set'
         return
     }
 
     if ($configurationData.AllNodes -and $CurrentJobNumber -eq 1)
     {
-        
         $modules = Get-ModuleFromFolder -ModuleFolder $RequiredModulesDirectory | Where-Object -FilterScript {
-            $null -ne $_.ExportedDscResources
+            $_.ExportedDscResources.count -gt 0
         } # Only zip up the Modules that have Exported DSC Resources
         #TODO: be more selective and maybe check based on the MOFs (but that's a lot of MOF to parse)
 
@@ -68,7 +67,7 @@ task CompressModulesWithChecksum {
             $destinationPath = Join-Path -Path $CompressedModulesFolder -ChildPath "$($module.Name)_$($module.Version).zip"
             Compress-Archive -Path "$($module.ModuleBase)\*" -DestinationPath $destinationPath
             $hash = (Get-FileHash -Path $destinationPath).Hash
-        
+
             try
             {
                 $stream = New-Object -TypeName System.IO.StreamWriter("$destinationPath.checksum", $false)

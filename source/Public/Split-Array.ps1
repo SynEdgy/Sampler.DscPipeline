@@ -9,14 +9,14 @@ function Split-Array
         [Parameter(Mandatory = $true, ParameterSetName = 'ChunkSize')]
         [int]
         $ChunkSize,
-        
+
         [Parameter(Mandatory = $true, ParameterSetName = 'ChunkCount')]
         [int]
         $ChunkCount
     )
 
     $aggregateList = @()
-    
+
     if ($ChunkCount)
     {
         $ChunkSize = [Math]::Ceiling($List.Count / $ChunkCount)
@@ -37,5 +37,5 @@ function Split-Array
         $aggregateList += @(, $List[$start..($end + $leftOver)])
     }
 
-    , $aggregateList    
+    , $aggregateList
 }

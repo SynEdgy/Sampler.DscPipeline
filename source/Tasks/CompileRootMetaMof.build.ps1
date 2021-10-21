@@ -22,7 +22,7 @@ param
     [Parameter()]
     [string]
     $MetaMofOutputFolder = (property MetaMofOutputFolder 'MetaMOF'),
-    
+
     # Build Configuration object
     [Parameter()]
     [System.Collections.Hashtable]
@@ -42,12 +42,12 @@ task CompileRootMetaMof {
             $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
             $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
         }) -join [io.path]::PathSeparator
-        
+
         if (-not (Test-Path -Path $MetaMofOutputFolder))
         {
             $null = New-Item -ItemType Directory -Path $MetaMofOutputFolder
         }
-        
+
         if ($configurationData.AllNodes)
         {
             . (Join-Path -Path $SourcePath -ChildPath 'RootMetaMof.ps1')

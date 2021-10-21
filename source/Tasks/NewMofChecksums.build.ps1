@@ -9,7 +9,7 @@ param
     # Base directory of all output (default to 'output')
     [System.String]
     $OutputDirectory = (property OutputDirectory (Join-Path $BuildRoot 'output')),
-    
+
     [Parameter()]
     [string]
     $MofOutputFolder = (property MofOutputFolder 'MOF'),
