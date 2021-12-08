@@ -58,7 +58,7 @@ task CompressModulesWithChecksum {
     if ($configurationData.AllNodes -and $CurrentJobNumber -eq 1)
     {
         $modules = Get-ModuleFromFolder -ModuleFolder $RequiredModulesDirectory | Where-Object -FilterScript {
-            $_.ExportedDscResources.count -gt 0
+            Get-DscResource -Module $_.Name
         } # Only zip up the Modules that have Exported DSC Resources
         #TODO: be more selective and maybe check based on the MOFs (but that's a lot of MOF to parse)
 
