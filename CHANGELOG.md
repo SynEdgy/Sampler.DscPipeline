@@ -8,3 +8,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Adding pipeline tasks and commands from DSC Workshop.
+- Small changes to support easier deployment for individual environments.

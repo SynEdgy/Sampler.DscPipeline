@@ -25,7 +25,7 @@ task NewMofChecksums {
 
     $MofOutputFolder = Get-SamplerAbsolutePath -Path $MofOutputFolder -RelativeTo $OutputDirectory
 
-    $mofs = Get-ChildItem -Path $MofOutputFolder -ErrorAction SilentlyContinue
+    $mofs = Get-ChildItem -Path $MofOutputFolder -Recurse -ErrorAction SilentlyContinue
     foreach ($mof in $mofs)
     {
         if ($mof.BaseName -in $global:configurationData.AllNodes.NodeName)
