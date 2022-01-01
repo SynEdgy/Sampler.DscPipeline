@@ -43,21 +43,25 @@ task CompileRootConfiguration {
 
     $MofOutputFolder = Get-SamplerAbsolutePath -Path $MofOutputFolder -RelativeTo $OutputDirectory
 
-    if (-not (Test-Path -Path $MofOutputFolder)) {
+    if (-not (Test-Path -Path $MofOutputFolder))
+    {
         $null = New-Item -ItemType Directory -Path $MofOutputFolder -Force
     }
 
     Start-Transcript -Path "$BuildOutput\Logs\CompileRootConfiguration.log"
     try
     {
-        $originalPSModulePath = $env:PSModulePath 
+        $originalPSModulePath = $env:PSModulePath
         $env:PSModulePath = ($env:PSModulePath -split [io.path]::PathSeparator).Where({
-            $_ -notmatch ([regex]::Escape('powershell\7\Modules')) -and
-            $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
-            $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
-        }) -join [io.path]::PathSeparator
+                $_ -notmatch ([regex]::Escape('powershell\7\Modules')) -and
+                $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
+                $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
+            }) -join [io.path]::PathSeparator
 
-        $mofs = . (Join-Path -Path $SourcePath -ChildPath 'RootConfiguration.ps1')
+        $rootConfigurationPath = Split-Path -Path $PSScriptRoot -Parent
+        $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath Scripts
+        $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath RootConfiguration.ps1
+        $mofs = . $rootConfigurationPath
         if ($ConfigurationData.AllNodes.Count -ne $mofs.Count)
         {
             Write-Warning "Compiled MOF file count <> node count"
@@ -79,5 +83,5 @@ task CompileRootConfiguration {
         $env:PSModulePath = $originalPSModulePath
         Stop-Transcript
     }
-    
+
 }

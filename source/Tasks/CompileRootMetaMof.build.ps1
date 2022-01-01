@@ -38,10 +38,10 @@ task CompileRootMetaMof {
     try
     {
         $env:PSModulePath = ($env:PSModulePath -split [io.path]::PathSeparator).Where({
-            $_ -notmatch ([regex]::Escape('powershell\7\Modules')) -and
-            $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
-            $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
-        }) -join [io.path]::PathSeparator
+                $_ -notmatch ([regex]::Escape('powershell\7\Modules')) -and
+                $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
+                $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
+            }) -join [io.path]::PathSeparator
 
         if (-not (Test-Path -Path $MetaMofOutputFolder))
         {
@@ -50,7 +50,11 @@ task CompileRootMetaMof {
 
         if ($configurationData.AllNodes)
         {
-            . (Join-Path -Path $SourcePath -ChildPath 'RootMetaMof.ps1')
+            $rootMetaMofPath = Split-Path -Path $PSScriptRoot -Parent
+            $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath Scripts
+            $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath RootMetaMof.ps1
+
+            . $rootMetaMofPath
             $metaMofs = RootMetaMOF -ConfigurationData $configurationData -OutputPath $MetaMofOutputFolder
             Write-Build Green "Successfully compiled $($metaMofs.Count) Meta MOF files."
         }
