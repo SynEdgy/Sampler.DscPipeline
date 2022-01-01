@@ -46,6 +46,7 @@
     RequiredModules = @(
         'Plaster'
         'Sampler'
+        'Get-DscResourceFromModuleInFolder'
     )
 
     # Assemblies that must be loaded prior to importing this module
