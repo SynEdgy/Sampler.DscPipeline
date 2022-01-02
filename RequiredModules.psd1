@@ -22,5 +22,6 @@
     'DscResource.AnalyzerRules' = 'latest'
     xDscResourceDesigner        = 'latest'
     'DscResource.DocGenerator'  = 'latest'
-    'Datum'                     = 'latest'
+    Datum                       = 'latest'
+    DscBuildHelpers             = 'latest'
 }
