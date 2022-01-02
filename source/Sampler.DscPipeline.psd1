@@ -47,7 +47,6 @@
         'Plaster'
         'Sampler'
         'DscBuildHelpers'
-        'xDscResourceDesigner'
     )
 
     # Assemblies that must be loaded prior to importing this module
