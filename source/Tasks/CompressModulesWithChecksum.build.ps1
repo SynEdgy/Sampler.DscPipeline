@@ -66,9 +66,17 @@ task CompressModulesWithChecksum {
 
         foreach ($module in $modulesWithDscResources)
         {
+            $tempPath = Join-Path -Path $RequiredModulesDirectory -ChildPath CompressTemp
+            New-Item -Path $tempPath -ItemType Directory -Force
+            Copy-Item -Path "$($module.ModuleBase)\*" -Destination $tempPath -Force
+
             $destinationPath = Join-Path -Path $CompressedModulesFolder -ChildPath "$($module.Name)_$($module.Version).zip"
-            Compress-Archive -Path "$($module.ModuleBase)\*" -DestinationPath $destinationPath
+
+            Write-Host "Compressing module '$($module.Name)' to '$destinationPath'"
+            Compress-Archive -Path $tempPath\* -DestinationPath $destinationPath
             $hash = (Get-FileHash -Path $destinationPath).Hash
+
+            Remove-Item -Path $tempPath -Force -Recurse
 
             try
             {
