@@ -59,10 +59,12 @@ task CompressModulesWithChecksum {
     {
         #Only zip up the Modules that have Exported DSC Resources
         $allModules = Get-ModuleFromFolder -ModuleFolder $RequiredModulesDirectory
-        $modules = Get-DscResourceFromModuleInFolder -ModuleFolder $RequiredModulesDirectory -Modules $allModules
+        $modulesWithDscResources = Get-DscResourceFromModuleInFolder -ModuleFolder $RequiredModulesDirectory -Modules $allModules |
+            Select-Object -ExpandProperty ModuleName -Unique
+        $modulesWithDscResources = $allModules | Where-Object Name -In $modulesWithDscResources
         #TODO: be more selective and maybe check based on the MOFs (but that's a lot of MOF to parse)
 
-        foreach ($module in $modules)
+        foreach ($module in $modulesWithDscResources)
         {
             $destinationPath = Join-Path -Path $CompressedModulesFolder -ChildPath "$($module.Name)_$($module.Version).zip"
             Compress-Archive -Path "$($module.ModuleBase)\*" -DestinationPath $destinationPath
