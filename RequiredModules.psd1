@@ -20,7 +20,7 @@
     'DscResource.Common'        = 'latest'
     'DscResource.Test'          = 'latest'
     'DscResource.AnalyzerRules' = 'latest'
-    xDscResourceDesigner        = 'latest'
+    xDSCResourceDesigner        = 'latest'
     'DscResource.DocGenerator'  = 'latest'
     Datum                       = 'latest'
     DscBuildHelpers             = 'latest'
