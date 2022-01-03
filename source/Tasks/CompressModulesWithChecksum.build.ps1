@@ -57,6 +57,9 @@ task CompressModulesWithChecksum {
 
     if ($configurationData.AllNodes -and $CurrentJobNumber -eq 1)
     {
+        $previousProgressPreference = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
+
         #Only zip up the Modules that have Exported DSC Resources
         $allModules = Get-ModuleFromFolder -ModuleFolder $RequiredModulesDirectory
         $modulesWithDscResources = Get-DscResourceFromModuleInFolder -ModuleFolder $RequiredModulesDirectory -Modules $allModules |
@@ -66,17 +69,11 @@ task CompressModulesWithChecksum {
 
         foreach ($module in $modulesWithDscResources)
         {
-            $tempPath = Join-Path -Path $RequiredModulesDirectory -ChildPath CompressTemp
-            New-Item -Path $tempPath -ItemType Directory -Force
-            Copy-Item -Path "$($module.ModuleBase)\*" -Destination $tempPath -Force
-
             $destinationPath = Join-Path -Path $CompressedModulesFolder -ChildPath "$($module.Name)_$($module.Version).zip"
 
             Write-Host "Compressing module '$($module.Name)' to '$destinationPath'"
-            Compress-Archive -Path $tempPath\* -DestinationPath $destinationPath
+            [System.IO.Compression.ZipFile]::CreateFromDirectory($module.ModuleBase, $destinationPath, 'Fastest', $false)
             $hash = (Get-FileHash -Path $destinationPath).Hash
-
-            Remove-Item -Path $tempPath -Force -Recurse
 
             try
             {
@@ -91,6 +88,8 @@ task CompressModulesWithChecksum {
                 }
             }
         }
+
+        $ProgressPreference = $previousProgressPreference
     }
     else
     {
