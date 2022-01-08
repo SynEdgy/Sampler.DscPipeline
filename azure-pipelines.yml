@@ -22,10 +22,10 @@ variables:
 stages:
   - stage: Build
     jobs:
-      - job: Package_Module
-        displayName: 'Package Module'
+      - job: Build_Module
+        displayName: 'Build Module'
         pool:
-          vmImage: 'ubuntu-latest'
+          vmImage: 'windows-2019'
         steps:
           - pwsh: |
               dotnet tool install --global GitVersion.Tool
@@ -39,11 +39,11 @@ stages:
             name: gitVersion
 
           - task: PowerShell@2
-            name: package
-            displayName: 'Build & Package Module'
+            name: build
+            displayName: 'Build Module'
             inputs:
               filePath: './build.ps1'
-              arguments: '-ResolveDependency -tasks pack'
+              arguments: '-ResolveDependency'
               pwsh: true
             env:
               ModuleVersion: $(NuGetVersionV2)

@@ -57,15 +57,22 @@ task CompressModulesWithChecksum {
 
     if ($configurationData.AllNodes -and $CurrentJobNumber -eq 1)
     {
-        $modules = Get-ModuleFromFolder -ModuleFolder $RequiredModulesDirectory | Where-Object -FilterScript {
-            Get-DscResource -Module $_.Name
-        } # Only zip up the Modules that have Exported DSC Resources
+        $previousProgressPreference = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
+
+        #Only zip up the Modules that have Exported DSC Resources
+        $allModules = Get-ModuleFromFolder -ModuleFolder $RequiredModulesDirectory
+        $modulesWithDscResources = Get-DscResourceFromModuleInFolder -ModuleFolder $RequiredModulesDirectory -Modules $allModules |
+            Select-Object -ExpandProperty ModuleName -Unique
+        $modulesWithDscResources = $allModules | Where-Object Name -In $modulesWithDscResources
         #TODO: be more selective and maybe check based on the MOFs (but that's a lot of MOF to parse)
 
-        foreach ($module in $modules)
+        foreach ($module in $modulesWithDscResources)
         {
             $destinationPath = Join-Path -Path $CompressedModulesFolder -ChildPath "$($module.Name)_$($module.Version).zip"
-            Compress-Archive -Path "$($module.ModuleBase)\*" -DestinationPath $destinationPath
+
+            Write-Host "Compressing module '$($module.Name)' to '$destinationPath'"
+            [System.IO.Compression.ZipFile]::CreateFromDirectory($module.ModuleBase, $destinationPath, 'Fastest', $false)
             $hash = (Get-FileHash -Path $destinationPath).Hash
 
             try
@@ -81,6 +88,8 @@ task CompressModulesWithChecksum {
                 }
             }
         }
+
+        $ProgressPreference = $previousProgressPreference
     }
     else
     {
