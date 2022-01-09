@@ -10,10 +10,26 @@ if (-not $environment ){
     $environment = 'NA'
 }
 
+<#
+This information is taken from build.yaml
+
+Sampler.DscPipeline:
+  DscCompositeResourceModules:
+  - CommonTasks
+  - SomeOtherModule
+#>
+Write-Host "RootConfiguration will import these composite resource modules as defined in 'build.yaml':"
+$importStatements = foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules) {
+    Write-Host "`t- $module"
+    "Import-DscResource -ModuleName $module`n"
+}
+Write-Host
+
+$rootConfiguration = @'
 configuration "RootConfiguration"
 {
     Import-DscResource -ModuleName PSDesiredStateConfiguration
-    Import-DscResource -ModuleName CommonTasks
+    <importStatements>
 
     $module = Get-Module -Name PSDesiredStateConfiguration
     & $module {
@@ -72,6 +88,9 @@ configuration "RootConfiguration"
     }
     $global:node = $node = $null
 }
+'@ -replace '<importStatements>', $importStatements
+
+Invoke-Expression -Command $rootConfiguration
 
 $cd = @{}
 $cd.Datum = $ConfigurationData.Datum

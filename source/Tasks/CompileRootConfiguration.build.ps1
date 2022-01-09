@@ -58,13 +58,21 @@ task CompileRootConfiguration {
                 $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
             }) -join [io.path]::PathSeparator
 
-        $rootConfigurationPath = Split-Path -Path $PSScriptRoot -Parent
-        $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath Scripts
-        $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath RootConfiguration.ps1
+        $rootConfigurationPath = if (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1))
+        {
+            Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1
+        }
+        else
+        {
+            $tempPath = Split-Path -Path $PSScriptRoot -Parent
+            $tempPath = Join-Path -Path $tempPath -ChildPath Scripts
+            Join-Path -Path $tempPath -ChildPath RootConfiguration.ps1
+        }
+
         $mofs = . $rootConfigurationPath
         if ($ConfigurationData.AllNodes.Count -ne $mofs.Count)
         {
-            Write-Warning "Compiled MOF file count <> node count"
+            Write-Warning "Compiled MOF file count <> node count. Node count: $($ConfigurationData.AllNodes.Count), MOF file count: $($($mofs.Count))."
         }
 
         Write-Build Green "Successfully compiled $($mofs.Count) MOF files"

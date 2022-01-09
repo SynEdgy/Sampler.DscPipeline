@@ -50,17 +50,24 @@ task CompileRootMetaMof {
 
         if ($configurationData.AllNodes)
         {
-            $rootMetaMofPath = Split-Path -Path $PSScriptRoot -Parent
-            $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath Scripts
-            $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath RootMetaMof.ps1
-
+            $rootMetaMofPath = if (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootMetaMof.ps1))
+            {
+                Join-Path -Path $SourcePath -ChildPath RootMetaMof.ps1
+            }
+            else
+            {
+                $tempPath = Split-Path -Path $PSScriptRoot -Parent
+                $tempPath = Join-Path -Path $tempPath -ChildPath Scripts
+                Join-Path -Path $tempPath -ChildPath RootMetaMof.ps1
+            }
             . $rootMetaMofPath
+
             $metaMofs = RootMetaMOF -ConfigurationData $configurationData -OutputPath $MetaMofOutputFolder
             Write-Build Green "Successfully compiled $($metaMofs.Count) Meta MOF files."
         }
         else
         {
-            Write-Build Green "No data to compile Meta MOF files"
+            Write-Build Green 'No data to compile Meta MOF files'
         }
     }
     finally
