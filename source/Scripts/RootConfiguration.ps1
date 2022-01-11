@@ -1,39 +1,10 @@
-Import-Module -Name DscBuildHelpers
-$Error.Clear()
-
-if (-not $ModuleVersion) {
-    $ModuleVersion = '0.0.0'
-}
-
-$environment = $node.Environment
-if (-not $environment ){
-    $environment = 'NA'
-}
-
-<#
-This information is taken from build.yaml
-
-Sampler.DscPipeline:
-  DscCompositeResourceModules:
-  - CommonTasks
-  - SomeOtherModule
-#>
-Write-Host "RootConfiguration will import these composite resource modules as defined in 'build.yaml':"
-$importStatements = foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules) {
-    Write-Host "`t- $module"
-    "Import-DscResource -ModuleName $module`n"
-}
-Write-Host
-
-$rootConfiguration = @'
-configuration "RootConfiguration"
+configuration RootConfiguration
 {
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
-    <importStatements>
+    #<importStatements>
 
     $module = Get-Module -Name PSDesiredStateConfiguration
     & $module {
-        param(
+        param (
             [string]$ModuleVersion,
             [string]$Environment
         )
@@ -46,7 +17,8 @@ configuration "RootConfiguration"
         $configurationNames = Resolve-NodeProperty -PropertyPath 'Configurations' -Node $Node
         $global:node = $node #this makes the node variable being propagated into the configurations
 
-        foreach ($configurationName in $configurationNames) {
+        foreach ($configurationName in $configurationNames)
+        {
             Write-Debug "`tLooking up params for $configurationName"
             $properties = Resolve-NodeProperty -PropertyPath $configurationName -DefaultValue @{}
 
@@ -54,59 +26,44 @@ configuration "RootConfiguration"
 
             (Get-DscSplattedResource -ResourceName $configurationName -ExecutionName $configurationName -Properties $properties -NoInvoke).Invoke($properties)
 
-            if($Error[0] -and $lastError -ne $Error[0]) {
-                $lastIndex = [Math]::Max(($Error.LastIndexOf($lastError) -1), -1)
-                if($lastIndex -gt 0) {
+            if ($Error[0] -and $lastError -ne $Error[0])
+            {
+                $lastIndex = [Math]::Max(($Error.LastIndexOf($lastError) - 1), -1)
+                if ($lastIndex -gt 0)
+                {
                     $Error[0..$lastIndex].Foreach{
-                        if($message = Get-DscErrorMessage -Exception $_.Exception) {
+                        if ($message = Get-DscErrorMessage -Exception $_.Exception)
+                        {
                             $null = $dscError.Add($message)
                         }
                     }
                 }
-                else {
-                    if($message = Get-DscErrorMessage -Exception $Error[0].Exception) {
+                else
+                {
+                    if ($message = Get-DscErrorMessage -Exception $Error[0].Exception)
+                    {
                         $null = $dscError.Add($message)
                     }
                 }
                 $lastError = $Error[0]
             }
 
-            if($dscError.Count -gt 0) {
+            if ($dscError.Count -gt 0)
+            {
                 $warningMessage = "    $($Node.Name) : $($Node.Role) ::> $configurationName "
                 $n = [System.Math]::Max(1, 100 - $warningMessage.Length)
-                Write-Host "$warningMessage$('.' * $n)FAILED" -ForeGroundColor Yellow
+                Write-Host "$warningMessage$('.' * $n)FAILED" -ForegroundColor Yellow
                 $dscError.Foreach{
-                    Write-Host "`t$message" -ForeGroundColor Yellow
+                    Write-Host "`t$message" -ForegroundColor Yellow
                 }
             }
-            else {
+            else
+            {
                 $okMessage = "    $($Node.Name) : $($Node.Role) ::> $configurationName "
                 $n = [System.Math]::Max(1, 100 - $okMessage.Length)
-                Write-Host "$okMessage$('.' * $n)OK" -ForeGroundColor Green
+                Write-Host "$okMessage$('.' * $n)OK" -ForegroundColor Green
             }
         }
     }
     $global:node = $node = $null
-}
-'@ -replace '<importStatements>', $importStatements
-
-Invoke-Expression -Command $rootConfiguration
-
-$cd = @{}
-$cd.Datum = $ConfigurationData.Datum
-
-foreach ($node in $configurationData.AllNodes)
-{
-    $cd.AllNodes = @($ConfigurationData.AllNodes | Where-Object NodeName -eq $node.NodeName)
-    try
-    {
-        $path = Join-Path -Path MOF -ChildPath $node.Environment
-        RootConfiguration -ConfigurationData $cd -OutputPath (Join-Path -Path $BuildOutput -ChildPath $path)
-    }
-    catch
-    {
-        Write-Host "Error occured during compilation of node '$($node.NodeName)' : $($_.Exception.Message)" -ForegroundColor Red
-        $relevantErrors = $Error | Where-Object Exception -isnot [System.Management.Automation.ItemNotFoundException]
-        Write-Host ($relevantErrors[0..2] | Out-String) -ForegroundColor Red
-    }
 }
