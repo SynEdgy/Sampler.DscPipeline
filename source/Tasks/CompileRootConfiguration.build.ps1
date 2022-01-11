@@ -58,15 +58,18 @@ task CompileRootConfiguration {
                 $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
             }) -join [io.path]::PathSeparator
 
-        $rootConfigurationPath = if (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1))
+        Write-Build Green ''
+        if (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1))
         {
-            Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1
+            Write-Build Green "Found and using 'RootConfiguration.ps1' in '$SourcePath'"
+            $rootConfigurationPath = Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1
         }
         else
         {
-            $tempPath = Split-Path -Path $PSScriptRoot -Parent
-            $tempPath = Join-Path -Path $tempPath -ChildPath Scripts
-            Join-Path -Path $tempPath -ChildPath RootConfiguration.ps1
+            Write-Build Green "Did not find 'RootConfiguration.ps1' in '$SourcePath', using 'CompileRootConfiguration.ps1' the one in 'Sampler.DscPipeline'"
+            $rootConfigurationPath = Split-Path -Path $PSScriptRoot -Parent
+            $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath Scripts
+            $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath CompileRootConfiguration.ps1
         }
 
         $mofs = . $rootConfigurationPath

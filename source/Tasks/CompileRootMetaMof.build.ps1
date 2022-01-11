@@ -50,15 +50,18 @@ task CompileRootMetaMof {
 
         if ($configurationData.AllNodes)
         {
-            $rootMetaMofPath = if (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootMetaMof.ps1))
+            Write-Build Green ''
+            if (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootMetaMof.ps1))
             {
-                Join-Path -Path $SourcePath -ChildPath RootMetaMof.ps1
+                Write-Build Green "Found and using 'RootMetaMof.ps1' in '$SourcePath'"
+                $rootMetaMofPath = Join-Path -Path $SourcePath -ChildPath RootMetaMof.ps1
             }
             else
             {
-                $tempPath = Split-Path -Path $PSScriptRoot -Parent
-                $tempPath = Join-Path -Path $tempPath -ChildPath Scripts
-                Join-Path -Path $tempPath -ChildPath RootMetaMof.ps1
+                Write-Build Green "Did not find 'RootMetaMof.ps1' in '$SourcePath', using 'RootMetaMof.ps1' the one in module 'Sampler.DscPipeline'"
+                $rootMetaMofPath = Split-Path -Path $PSScriptRoot -Parent
+                $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath Scripts
+                $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath RootMetaMof.ps1
             }
             . $rootMetaMofPath
 
