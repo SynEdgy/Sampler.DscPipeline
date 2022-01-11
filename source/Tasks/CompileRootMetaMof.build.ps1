@@ -38,10 +38,10 @@ task CompileRootMetaMof {
     try
     {
         $env:PSModulePath = ($env:PSModulePath -split [io.path]::PathSeparator).Where({
-            $_ -notmatch ([regex]::Escape('powershell\7\Modules')) -and
-            $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
-            $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
-        }) -join [io.path]::PathSeparator
+                $_ -notmatch ([regex]::Escape('powershell\7\Modules')) -and
+                $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
+                $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
+            }) -join [io.path]::PathSeparator
 
         if (-not (Test-Path -Path $MetaMofOutputFolder))
         {
@@ -50,13 +50,27 @@ task CompileRootMetaMof {
 
         if ($configurationData.AllNodes)
         {
-            . (Join-Path -Path $SourcePath -ChildPath 'RootMetaMof.ps1')
+            Write-Build Green ''
+            if (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootMetaMof.ps1))
+            {
+                Write-Build Green "Found and using 'RootMetaMof.ps1' in '$SourcePath'"
+                $rootMetaMofPath = Join-Path -Path $SourcePath -ChildPath RootMetaMof.ps1
+            }
+            else
+            {
+                Write-Build Green "Did not find 'RootMetaMof.ps1' in '$SourcePath', using 'RootMetaMof.ps1' the one in module 'Sampler.DscPipeline'"
+                $rootMetaMofPath = Split-Path -Path $PSScriptRoot -Parent
+                $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath Scripts
+                $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath RootMetaMof.ps1
+            }
+            . $rootMetaMofPath
+
             $metaMofs = RootMetaMOF -ConfigurationData $configurationData -OutputPath $MetaMofOutputFolder
             Write-Build Green "Successfully compiled $($metaMofs.Count) Meta MOF files."
         }
         else
         {
-            Write-Build Green "No data to compile Meta MOF files"
+            Write-Build Green 'No data to compile Meta MOF files'
         }
     }
     finally

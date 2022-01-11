@@ -6,6 +6,7 @@
 CopyPaths:
   - en-US
   - Tasks
+  - Scripts
   # - Modules
 Encoding: UTF8
 suffix: suffix.ps1
