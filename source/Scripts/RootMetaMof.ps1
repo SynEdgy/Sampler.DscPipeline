@@ -12,7 +12,7 @@ Configuration RootMetaMOF {
         }
         (Get-DscSplattedResource -ResourceName Settings -ExecutionName '' -Properties $lcmConfig -NoInvoke).Invoke($lcmConfig)
 
-        if ($configurationRepositoryShare = Resolve-NodeProperty -PropertyPath 'LcmConfig\ConfigurationRepositoryShare' -Node $Node  -DefaultValue $null)
+        if ($configurationRepositoryShare = Resolve-NodeProperty -PropertyPath 'LcmConfig\ConfigurationRepositoryShare' -Node $Node -DefaultValue $null)
         {
             (Get-DscSplattedResource -ResourceName ConfigurationRepositoryShare -ExecutionName ConfigurationRepositoryShare -Properties $configurationRepositoryShare -NoInvoke).Invoke($configurationRepositoryShare)
         }
