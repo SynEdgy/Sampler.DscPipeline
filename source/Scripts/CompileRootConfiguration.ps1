@@ -21,6 +21,20 @@ Sampler.DscPipeline:
     Version: 0.3.259
   - PSDesiredStateConfiguration
 #>
+
+if (-not $BuildInfo.'Sampler.DscPipeline')
+{
+    Write-Error "There are no modules to import defined in the 'build.yml'. Expected the element 'Sampler.DscPipeline'"
+}
+if (-not $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules)
+{
+    Write-Error "There are no modules to import defined in the 'build.yml'. Expected the element 'Sampler.DscPipeline'.DscCompositeResourceModules"
+}
+if ($BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules.Count -lt 1)
+{
+    Write-Error "There are no modules to import defined in the 'build.yml'. Expected at least one module defined under 'Sampler.DscPipeline'.DscCompositeResourceModules"
+}
+
 Write-Host "RootConfiguration will import these composite resource modules as defined in 'build.yaml':"
 $importStatements = foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules)
 {
