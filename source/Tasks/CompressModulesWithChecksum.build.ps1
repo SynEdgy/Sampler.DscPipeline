@@ -65,6 +65,12 @@ task CompressModulesWithChecksum {
         $modulesWithDscResources = Get-DscResourceFromModuleInFolder -ModuleFolder $RequiredModulesDirectory -Modules $allModules |
             Select-Object -ExpandProperty ModuleName -Unique
         $modulesWithDscResources = $allModules | Where-Object Name -In $modulesWithDscResources
+        #Added required modules for some DSCResources, example SharepointDSC with ReverseDSC
+        $dependentModulesWithNoDscResources = $modulesWithDscResources.RequiredModules | Where-Object Name -notin $modulesWithDscResources.Name |
+            Select-Object -ExpandProperty Name -Unique
+        $allModules | Where-Object Name -In $dependentModulesWithNoDscResources | ForEach-Object {
+            $modulesWithDscResources += $_
+        }
         #TODO: be more selective and maybe check based on the MOFs (but that's a lot of MOF to parse)
 
         foreach ($module in $modulesWithDscResources)
