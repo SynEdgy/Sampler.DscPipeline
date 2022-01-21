@@ -24,7 +24,7 @@ Sampler.DscPipeline:
 
 if (-not $BuildInfo.'Sampler.DscPipeline')
 {
-    Write-Error "There are no modules to import defined in the 'build.yml'. Expected the element 'Sampler.DscPipeline'"
+    Write-Error -Message "There are no modules to import defined in the 'build.yml'. Expected the element 'Sampler.DscPipeline'"
 }
 if (-not $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules)
 {
