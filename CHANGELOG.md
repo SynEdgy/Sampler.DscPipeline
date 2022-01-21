@@ -13,3 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Having modules available more than once results in: ImportCimAndScriptKeywordsFromModule : "A second CIM class definition
   for 'MSFT_PSRepository' was found while processing the schema file". Fixed that by using function 'Get-DscResourceFromModuleInFolder'.
   This usually happens with 'PackageManagement' and 'PowerShellGet'
+- Added error handling discovering 'CompileRootConfiguration.ps1' and 'RootMetaMof.ps1'
