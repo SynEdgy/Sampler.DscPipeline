@@ -18,3 +18,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   files don't exist, 'Sampler.DscPipeline' uses the scripts in 'ModuleRoot\Scripts'. To control which DSC composite and resource modules should be imported within the DSC configuration, add the section 'Sampler.DscPipeline' to the 'build.yml' as described
   on top of the file 'CompileRootConfiguration.ps1'.
 - Added error handling discovering 'CompileRootConfiguration.ps1' and 'RootMetaMof.ps1'
+- Test cases updated to Pester 5.
