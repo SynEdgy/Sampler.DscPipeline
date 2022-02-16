@@ -41,30 +41,38 @@ param
 )
 
 task TestConfigData {
-    
     $OutputDirectory = Get-SamplerAbsolutePath -Path $OutputDirectory -RelativeTo $ProjectPath
     $DatumConfigDataDirectory = Get-SamplerAbsolutePath -Path $DatumConfigDataDirectory -RelativeTo $ProjectPath
-    $PesterScript = $PesterScript.Foreach({
-        Get-SamplerAbsolutePath -Path $_ -RelativeTo $ProjectPath
-    })
+    $PesterScript = $PesterScript.Foreach( {
+            Get-SamplerAbsolutePath -Path $_ -RelativeTo $ProjectPath
+        })
 
-    $ConfigDataPesterScript = $ConfigDataPesterScript.Foreach({
-        Get-SamplerAbsolutePath -Path $_ -RelativeTo $PesterScript[0]
-    })
+    $ConfigDataPesterScript = $ConfigDataPesterScript.Foreach( {
+            Get-SamplerAbsolutePath -Path $_ -RelativeTo $PesterScript[0]
+        })
 
     Write-Build Green "Config Data Pester Scripts = [$($ConfigDataPesterScript -join ';')]"
 
-    if (-not (Test-Path -Path $ConfigDataPesterScript)) {
+    if (-not (Test-Path -Path $ConfigDataPesterScript))
+    {
         Write-Build Yellow "Path for tests '$ConfigDataPesterScript' does not exist"
         return
     }
 
     $testResultsPath = Get-SamplerAbsolutePath -Path $testResultsPath -RelativeTo $OutputDirectory
-    
+
     Write-Build DarkGray "testResultsPath is: $testResultsPath"
     Write-Build DarkGray "OutputDirectory is: $OutputDirectory"
-    
-    $testResults = Invoke-Pester -Script $ConfigDataPesterScript -PassThru -OutputFile $testResultsPath -OutputFormat NUnitXml -Tag Integration #-Show Failed, Summary
 
-    assert ($testResults.FailedCount -eq 0)
+    Import-Module -Name Pester
+    $po = [PesterConfiguration]::new()
+    $po.Run.PassThru = $true
+    $po.Run.Path = [string[]]$ConfigDataPesterScript
+    $po.Output.Verbosity = 'Detailed'
+    $po.Filter.Tag = 'Integration'
+    $po.TestResult.OutputFormat = 'NUnitXml'
+    $po.TestResult.OutputPath = $testResultsPath
+    $testResults = Invoke-Pester -Configuration $po
+
+    assert ($testResults.FailedCount -eq 0 -and $testResults.FailedBlocksCount -eq 0 -and $testResults.FailedContainersCount -eq 0)
 }
