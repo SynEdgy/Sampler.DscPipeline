@@ -1,30 +1,33 @@
 configuration RootConfiguration
 {
-    #<importStatements>
+    Import-DscResource -ModuleName CommonTasks
+
+    $m = Get-Module -Name Datum
+    $rsopCache = & $m { $rsopcache }
 
     $module = Get-Module -Name PSDesiredStateConfiguration
     & $module {
-        param (
-            [string]$ModuleVersion,
+        param(
+            [string]$BuildVersion,
             [string]$Environment
         )
-        $Script:PSTopConfigurationName = "MOF_$($Environment)_$($ModuleVersion)"
-    } $ModuleVersion, $environment
+        $Script:PSTopConfigurationName = "MOF_$($Environment)_$($BuildVersion)"
+    } $buildVersion, $environment
 
     node $ConfigurationData.AllNodes.NodeName {
         Write-Host "`r`n$('-'*75)`r`n$($Node.Name) : $($Node.NodeName) : $(&$module { $Script:PSTopConfigurationName })" -ForegroundColor Yellow
 
-        $configurationNames = Resolve-NodeProperty -PropertyPath 'Configurations' -Node $Node
+        $configurationNames = $rsopCache."$($Node.Name)".Configurations
         $global:node = $node #this makes the node variable being propagated into the configurations
 
         foreach ($configurationName in $configurationNames)
         {
             Write-Debug "`tLooking up params for $configurationName"
-            $properties = Resolve-NodeProperty -PropertyPath $configurationName -DefaultValue @{}
-
             $dscError = [System.Collections.ArrayList]::new()
 
-            (Get-DscSplattedResource -ResourceName $configurationName -ExecutionName $configurationName -Properties $properties -NoInvoke).Invoke($properties)
+            $clonedProperties = $rsopCache."$($Node.Name)".$configurationName
+
+            (Get-DscSplattedResource -ResourceName $configurationName -ExecutionName $configurationName -Properties $clonedProperties -NoInvoke).Invoke($clonedProperties)
 
             if ($Error[0] -and $lastError -ne $Error[0])
             {
@@ -65,5 +68,4 @@ configuration RootConfiguration
             }
         }
     }
-    $global:node = $node = $null
 }
