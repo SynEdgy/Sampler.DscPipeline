@@ -74,7 +74,7 @@ task CompileDatumRsop {
     if ($configurationData.AllNodes)
     {
         Write-Build Green "Generating RSOP output for $($configurationData.AllNodes.Count) nodes."
-        $configurationData.AllNodes.Where({$_['Name'] -ne '*'}) | ForEach-Object -Process {
+        $configurationData.AllNodes.Where({ $_['Name'] -ne '*' }) | ForEach-Object -Process {
             Write-Build Green "`tBuilding RSOP for $($_['NodeName'])..."
             $nodeRsop = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -RemoveSource
             $nodeRsop | ConvertTo-Json -Depth 40 | ConvertFrom-Json | Convertto-Yaml -OutFile (Join-Path -Path $rsopOutputPathVersion -ChildPath "$($_.Name).yml") -Force
@@ -85,6 +85,6 @@ task CompileDatumRsop {
     }
     else
     {
-        Write-Build Green "No data for generating RSOP output."
+        Write-Build Green 'No data for generating RSOP output.'
     }
 }

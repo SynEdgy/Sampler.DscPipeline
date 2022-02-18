@@ -18,7 +18,7 @@ function Get-FilteredConfigurationData
 
         [Parameter()]
         [Object]
-        $Datum = $(Get-variable Datum -ValueOnly -ErrorAction Stop)
+        $Datum = $(Get-Variable Datum -ValueOnly -ErrorAction Stop)
     )
 
     if ($null -eq $Filter)
@@ -49,6 +49,6 @@ function Get-FilteredConfigurationData
 
     return @{
         AllNodes = $allDatumNodes
-        Datum = $Datum
+        Datum    = $Datum
     }
 }

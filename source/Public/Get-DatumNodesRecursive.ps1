@@ -7,47 +7,47 @@ function Get-DatumNodesRecursive
     (
         [Parameter()]
         [object]
-        $AllDatumNodes = (Get-variable -Name Datum -ValueOnly).AllNodes
+        $AllDatumNodes = (Get-Variable -Name Datum -ValueOnly).AllNodes
     )
 
     $datumContainers = [System.Collections.Queue]::new()
 
     Write-Verbose -Message "Inspecting [$($AllDatumNodes.PSObject.Properties.Where({$_.MemberType -eq 'ScriptProperty'}).Name -join ', ')]"
-    $AllDatumNodes.PSObject.Properties.Where({$_.MemberType -eq 'ScriptProperty'}).ForEach({
-        Write-Verbose -Message "Working on '$($_.Name)'."
-        $val = $_.Value | Add-Member -MemberType NoteProperty -Name Name -Value $_.Name -PassThru -ErrorAction Ignore -Force
-        if ($val -is [FileProvider])
-        {
-            Write-Verbose -Message "Adding '$($val.Name)' to the queue."
-            $datumContainers.Enqueue($val)
-        }
-        else
-        {
-            Write-Verbose -Message "Adding Node '$($_.Name)'."
-            $val['Name'] = $_.Name
-            $val
-        }
-    })
+    $AllDatumNodes.PSObject.Properties.Where({ $_.MemberType -eq 'ScriptProperty' }).ForEach({
+            Write-Verbose -Message "Working on '$($_.Name)'."
+            $val = $_.Value | Add-Member -MemberType NoteProperty -Name Name -Value $_.Name -PassThru -ErrorAction Ignore -Force
+            if ($val -is [FileProvider])
+            {
+                Write-Verbose -Message "Adding '$($val.Name)' to the queue."
+                $datumContainers.Enqueue($val)
+            }
+            else
+            {
+                Write-Verbose -Message "Adding Node '$($_.Name)'."
+                $val['Name'] = $_.Name
+                $val
+            }
+        })
 
     while ($datumContainers.Count -gt 0)
     {
         $currentContainer = $datumContainers.Dequeue()
         Write-Debug -Message "Working on Container '$($currentContainer.Name)'."
 
-        $currentContainer.PSObject.Properties.Where({$_.MemberType -eq 'ScriptProperty'}).ForEach({
-            $val = $currentContainer.($_.Name)
-            $val | Add-Member -MemberType NoteProperty -Name Name -Value $_.Name -ErrorAction Ignore
-            if ($val -is [FileProvider])
-            {
-                Write-Verbose -Message "Found Container '$($_.Name).'"
-                $datumContainers.Enqueue($val)
-            }
-            else
-            {
-                Write-Verbose -Message "Found Node '$($_.Name)'."
-                $val['Name'] = $_.Name
-                $val
-            }
-        })
+        $currentContainer.PSObject.Properties.Where({ $_.MemberType -eq 'ScriptProperty' }).ForEach({
+                $val = $currentContainer.($_.Name)
+                $val | Add-Member -MemberType NoteProperty -Name Name -Value $_.Name -ErrorAction Ignore
+                if ($val -is [FileProvider])
+                {
+                    Write-Verbose -Message "Found Container '$($_.Name).'"
+                    $datumContainers.Enqueue($val)
+                }
+                else
+                {
+                    Write-Verbose -Message "Found Node '$($_.Name)'."
+                    $val['Name'] = $_.Name
+                    $val
+                }
+            })
     }
 }

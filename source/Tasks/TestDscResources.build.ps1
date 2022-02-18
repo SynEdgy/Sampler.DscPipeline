@@ -1,10 +1,12 @@
 task TestDscResources {
     Write-Build Yellow "Not implemented yet. We don't separate Composites from Resources or build dependencies anymore."
     return
-    try {
+    try
+    {
         Start-Transcript -Path "$BuildOutput\Logs\TestDscResources.log"
 
-        foreach ($configModule in (Get-Dependency -Path $ProjectPath/RequiredModules.psd1).DependencyName) {
+        foreach ($configModule in (Get-Dependency -Path $ProjectPath/RequiredModules.psd1).DependencyName)
+        {
             Write-Build DarkGray '------------------------------------------------------------'
             Write-Build DarkGray 'Currently loaded modules:'
             $env:PSModulePath -split ';' | Write-Build DarkGray
@@ -21,14 +23,16 @@ task TestDscResources {
             Write-Build DarkGray "ResourceCount $resourceCount"
 
             $maxIterations = 5
-            while ($resourceCount -ne (Get-DscResource -Module $configModule).Count -and $maxIterations -gt 0) {
+            while ($resourceCount -ne (Get-DscResource -Module $configModule).Count -and $maxIterations -gt 0)
+            {
                 $dscResources = Get-DscResource -Module $configModule
                 Write-Build DarkGray "ResourceCount DOES NOT match, currently '$($dscResources.Count)'. Resources missing:"
                 Write-Build DarkGray (Compare-Object -ReferenceObject $resources.Name -DifferenceObject $dscResources.Name).InputObject
                 Start-Sleep -Seconds 5
                 $maxIterations--
             }
-            if ($maxIterations -eq 0) {
+            if ($maxIterations -eq 0)
+            {
                 throw 'Could not get the expected DSC Resource count'
             }
 
@@ -44,23 +48,27 @@ task TestDscResources {
             Write-Build DarkGray
             Import-LocalizedData -BindingVariable requiredResources -FileName PSDepend.DscResources.psd1 -BaseDirectory $ProjectPath
             $requiredResources = @($requiredResources.GetEnumerator() | Where-Object { $_.Name -ne 'PSDependOptions' })
-            $requiredResources.GetEnumerator() | Foreach-Object {
+            $requiredResources.GetEnumerator() | ForEach-Object {
                 $rr = $_
-                try {
+                try
+                {
                     Get-DscResource -Module $rr.Name -WarningAction Stop
                 }
-                catch {
+                catch
+                {
                     Write-Error "DSC Resource '$($rr.Name)' cannot be found" -ErrorAction Stop
                 }
             } | Group-Object -Property ModuleName, Version |
-            Select-Object -Property Name, Count | Write-Build DarkGray
+                Select-Object -Property Name, Count | Write-Build DarkGray
             Write-Build DarkGray ------------------------------------------------------------
         }
     }
-    catch {
+    catch
+    {
         Write-Error -ErrorRecord $_
     }
-    finally {
+    finally
+    {
         Stop-Transcript
     }
 }
