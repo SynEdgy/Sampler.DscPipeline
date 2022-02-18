@@ -15,14 +15,14 @@ configuration RootConfiguration
     } $buildVersion, $environment
 
     node $ConfigurationData.AllNodes.NodeName {
-        Write-Host "`r`n$('-'*75)`r`n$($Node.Name) : $($Node.NodeName) : $(&$module { $Script:PSTopConfigurationName })" -ForegroundColor Yellow
+        Write-Host -Object "`r`n$('-'*75)`r`n$($Node.Name) : $($Node.NodeName) : $(&$module { $Script:PSTopConfigurationName })" -ForegroundColor Yellow
 
         $configurationNames = $rsopCache."$($Node.Name)".Configurations
         $global:node = $node #this makes the node variable being propagated into the configurations
 
         foreach ($configurationName in $configurationNames)
         {
-            Write-Debug "`tLooking up params for $configurationName"
+            Write-Debug -Message "`tLooking up params for $configurationName"
             $dscError = [System.Collections.ArrayList]::new()
 
             $clonedProperties = $rsopCache."$($Node.Name)".$configurationName
@@ -55,16 +55,16 @@ configuration RootConfiguration
             {
                 $warningMessage = "    $($Node.Name) : $($Node.Role) ::> $configurationName "
                 $n = [System.Math]::Max(1, 100 - $warningMessage.Length)
-                Write-Host "$warningMessage$('.' * $n)FAILED" -ForegroundColor Yellow
+                Write-Host -Object "$warningMessage$('.' * $n)FAILED" -ForegroundColor Yellow
                 $dscError.Foreach{
-                    Write-Host "`t$message" -ForegroundColor Yellow
+                    Write-Host -Object "`t$message" -ForegroundColor Yellow
                 }
             }
             else
             {
                 $okMessage = "    $($Node.Name) : $($Node.Role) ::> $configurationName "
                 $n = [System.Math]::Max(1, 100 - $okMessage.Length)
-                Write-Host "$okMessage$('.' * $n)OK" -ForegroundColor Green
+                Write-Host -Object "$okMessage$('.' * $n)OK" -ForegroundColor Green
             }
         }
     }
