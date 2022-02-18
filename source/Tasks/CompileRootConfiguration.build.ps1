@@ -66,7 +66,7 @@ task CompileRootConfiguration {
         }
         else
         {
-            Write-Build Green "Did not find 'RootConfiguration.ps1' in '$SourcePath', using 'CompileRootConfiguration.ps1' in 'Sampler.DscPipeline'"
+            Write-Build Green "Did not find 'RootConfiguration.ps1' in '$SourcePath', using 'CompileRootConfiguration.ps1' the one in 'Sampler.DscPipeline'"
             $rootConfigurationPath = Split-Path -Path $PSScriptRoot -Parent
             $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath Scripts
             $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath CompileRootConfiguration.ps1

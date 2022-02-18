@@ -58,7 +58,7 @@ task CompileRootMetaMof {
             }
             else
             {
-                Write-Build Green "Did not find 'RootMetaMof.ps1' in '$SourcePath', using 'RootMetaMof.ps1' in module 'Sampler.DscPipeline'"
+                Write-Build Green "Did not find 'RootMetaMof.ps1' in '$SourcePath', using 'RootMetaMof.ps1' the one in module 'Sampler.DscPipeline'"
                 $rootMetaMofPath = Split-Path -Path $PSScriptRoot -Parent
                 $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath Scripts
                 $rootMetaMofPath = Join-Path -Path $rootMetaMofPath -ChildPath RootMetaMof.ps1
