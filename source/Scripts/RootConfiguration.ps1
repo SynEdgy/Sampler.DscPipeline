@@ -1,6 +1,6 @@
 configuration RootConfiguration
 {
-    Import-DscResource -ModuleName CommonTasks
+    #<importStatements>
 
     $m = Get-Module -Name Datum
     $rsopCache = & $m { $rsopcache }
