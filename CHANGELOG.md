@@ -19,3 +19,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   on top of the file 'CompileRootConfiguration.ps1'.
 - Added error handling discovering 'CompileRootConfiguration.ps1' and 'RootMetaMof.ps1'
 - Test cases updated to Pester 5.
+- Fixing issue with ZipFile class not being present
