@@ -73,7 +73,7 @@ task TestBuildAcceptance {
     Write-Build DarkGray "BuildOutput is: $OutputDirectory"
 
     Import-Module -Name Pester
-    $po = $po = New-PesterConfiguration
+    $po = New-PesterConfiguration
     $po.Run.PassThru = $true
     $po.Run.Path = [string[]]$AcceptancePesterScript
     $po.Output.Verbosity = 'Detailed'
