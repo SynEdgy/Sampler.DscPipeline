@@ -17,4 +17,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the DSC project that uses 'Sampler.DscPipeline'. Same applies to the Meta MOF compilation script 'RootMetaMof.ps1'. If these
   files don't exist, 'Sampler.DscPipeline' uses the scripts in 'ModuleRoot\Scripts'. To control which DSC composite and resource modules should be imported within the DSC configuration, add the section 'Sampler.DscPipeline' to the 'build.yml' as described
   on top of the file 'CompileRootConfiguration.ps1'.
-- Added error handling discovering 'CompileRootConfiguration.ps1' and 'RootMetaMof.ps1'
+- Added error handling discovering 'CompileRootConfiguration.ps1' and 'RootMetaMof.ps1'.
+- Fixed RegEx to accept node names with dots and hyphens.
