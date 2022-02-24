@@ -1,4 +1,3 @@
-
 function Get-DscMofEnvironment
 {
     param
@@ -12,7 +11,7 @@ function Get-DscMofEnvironment
     {
         if (-not (Test-Path -Path $Path))
         {
-            Write-Error "The MOF file '$Path' cannot be found."
+            Write-Error -Message "The MOF file '$Path' cannot be found."
             return
         }
 
@@ -21,14 +20,14 @@ function Get-DscMofEnvironment
         $xRegistryDscEnvironment = $content | Select-String -Pattern '\[xRegistry\]DscEnvironment' -Context 0, 10
         if (-not $xRegistryDscEnvironment)
         {
-            Write-Error "No environment information found in MOF file '$Path'. The environment information must be added using the 'xRegistryx' named 'DscEnvironment'."
+            Write-Error -Message "No environment information found in MOF file '$Path'. The environment information must be added using the 'xRegistryx' named 'DscEnvironment'."
             return
         }
 
         $valueData = $xRegistryDscEnvironment.Context.PostContext | Select-String -Pattern 'ValueData' -Context 0, 1
         if (-not $valueData)
         {
-            Write-Error "Found the resource 'xRegistry' named 'DscEnvironment' in '$Path' but no ValueData in the expected range (10 lines after defining '[xRegistry]DscEnvironment'."
+            Write-Error -Message "Found the resource 'xRegistry' named 'DscEnvironment' in '$Path' but no ValueData in the expected range (10 lines after defining '[xRegistry]DscEnvironment'."
             return
         }
 

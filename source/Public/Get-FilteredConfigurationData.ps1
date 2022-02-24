@@ -18,7 +18,7 @@ function Get-FilteredConfigurationData
 
         [Parameter()]
         [Object]
-        $Datum = $(Get-Variable Datum -ValueOnly -ErrorAction Stop)
+        $Datum = $(Get-Variable -Name Datum -ValueOnly -ErrorAction Stop)
     )
 
     if ($null -eq $Filter)
