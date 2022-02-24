@@ -2,8 +2,7 @@ configuration RootConfiguration
 {
     #<importStatements>
 
-    $m = Get-Module -Name Datum
-    $rsopCache = & $m { $rsopcache }
+    $rsopCache = Get-DatumRsopCache
 
     $module = Get-Module -Name PSDesiredStateConfiguration
     & $module {

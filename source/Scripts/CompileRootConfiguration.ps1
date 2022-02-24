@@ -12,6 +12,8 @@ if (-not $environment)
     $environment = 'NA'
 }
 
+$rsopCache = Get-DatumRsopCache
+
 <#
 This information is taken from build.yaml
 
@@ -59,9 +61,9 @@ Invoke-Expression -Command $rootConfiguration
 $cd = @{}
 $cd.Datum = $ConfigurationData.Datum
 
-foreach ($node in $configurationData.AllNodes)
+foreach ($node in $rsopCache.GetEnumerator())
 {
-    $cd.AllNodes = @($ConfigurationData.AllNodes | Where-Object NodeName -EQ $node.NodeName)
+    $cd.AllNodes = @([hashtable]$node.Value)
     try
     {
         $path = Join-Path -Path MOF -ChildPath $node.Environment
