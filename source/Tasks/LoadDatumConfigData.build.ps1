@@ -62,7 +62,7 @@ task LoadDatumConfigData {
         Filter           = $Filter
     }
 
-    if ($message = (&git log -1) -and $message -match "--Added new node '(?<NodeName>\w+)'")
+    if ($message = (&git log -1) -and $message -match "--Added new node  '(?<NodeName>(\w|\.|-)+)'")
     {
         $global:Filter = $Filter = [scriptblock]::Create('$_.NodeName -eq "{0}"' -f $Matches.NodeName)
         $global:SkipCompressedModulesBuild = $true
