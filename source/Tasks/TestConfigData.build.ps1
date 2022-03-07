@@ -40,7 +40,7 @@ param
     $BuildInfo = (property BuildInfo @{ })
 )
 
-task TestConfigData {
+task TestConfigData -if ($CurrentJobNumber -eq 1) {
 
     $isWrongPesterVersion = (Get-Module -Name 'Pester' -ListAvailable | Select-Object -First 1).Version -lt [System.Version] '5.0.0'
 
