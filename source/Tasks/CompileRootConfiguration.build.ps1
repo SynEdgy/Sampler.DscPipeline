@@ -59,14 +59,15 @@ task CompileRootConfiguration {
             }) -join [io.path]::PathSeparator
 
         Write-Build Green ''
-        if (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1))
+        if ((Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1)) -and
+        (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath CompileRootConfiguration.ps1)))
         {
-            Write-Build Green "Found and using 'RootConfiguration.ps1' in '$SourcePath'"
-            $rootConfigurationPath = Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1
+            Write-Build Green "Found 'RootConfiguration.ps1' and 'CompileRootConfiguration.ps1' in '$SourcePath' and using these files"
+            $rootConfigurationPath = Join-Path -Path $SourcePath -ChildPath CompileRootConfiguration.ps1
         }
         else
         {
-            Write-Build Green "Did not find 'RootConfiguration.ps1' in '$SourcePath', using 'CompileRootConfiguration.ps1' the one in 'Sampler.DscPipeline'"
+            Write-Build Green "Did not find 'RootConfiguration.ps1' and 'CompileRootConfiguration.ps1' in '$SourcePath', using the ones in 'Sampler.DscPipeline'"
             $rootConfigurationPath = Split-Path -Path $PSScriptRoot -Parent
             $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath Scripts
             $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath CompileRootConfiguration.ps1
