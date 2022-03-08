@@ -13,7 +13,7 @@ function Get-DscMofVersion
     {
         if (-not (Test-Path -Path $Path))
         {
-            Write-Error "The MOF file '$Path' cannot be found."
+            Write-Error -Message  "The MOF file '$Path' cannot be found."
             return
         }
 
@@ -23,14 +23,14 @@ function Get-DscMofVersion
 
         if (-not $xRegistryDscVersion)
         {
-            Write-Error "No version information found in MOF file '$Path'. The version information must be added using the 'xRegistry' named 'DscVersion'."
+            Write-Error -Message "No version information found in MOF file '$Path'. The version information must be added using the 'xRegistry' named 'DscVersion'."
             return
         }
 
         $valueData = $xRegistryDscVersion.Context.PostContext | Select-String -Pattern 'ValueData' -Context 0, 1
         if (-not $valueData)
         {
-            Write-Error "Found the resource 'xRegistry' named 'DscVersion' in '$Path' but no ValueData in the expected range (10 lines after defining '[xRegistry]DscVersion'."
+            Write-Error -Message "Found the resource 'xRegistry' named 'DscVersion' in '$Path' but no ValueData in the expected range (10 lines after defining '[xRegistry]DscVersion'."
             return
         }
 
@@ -41,7 +41,7 @@ function Get-DscMofVersion
         }
         catch
         {
-            Write-Error "ValueData could not be converted into 'System.Version'. The value taken from the MOF file was '$value'"
+            Write-Error -Message  "ValueData could not be converted into 'System.Version'. The value taken from the MOF file was '$value'"
             return
         }
     }

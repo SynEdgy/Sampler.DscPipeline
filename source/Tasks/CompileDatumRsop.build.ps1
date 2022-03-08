@@ -42,7 +42,7 @@ param
 
 task CompileDatumRsop {
 
-    Clear-DatumCache #otherwise this task will not generate new RSOP data
+    Clear-DatumRsopCache #otherwise this task will not generate new RSOP data
 
     # Get the vales for task variables, see https://github.com/gaelcolas/Sampler#task-variables.
     . Set-SamplerTaskVariable -AsNewBuild
@@ -77,10 +77,10 @@ task CompileDatumRsop {
         $configurationData.AllNodes.Where({ $_['Name'] -ne '*' }) | ForEach-Object -Process {
             Write-Build Green "`tBuilding RSOP for $($_['Name'])..."
             $nodeRsop = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -RemoveSource
-            $nodeRsop | ConvertTo-Json -Depth 40 | ConvertFrom-Json | Convertto-Yaml -OutFile (Join-Path -Path $rsopOutputPathVersion -ChildPath "$($_.Name).yml") -Force
+            $nodeRsop | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path -Path $rsopOutputPathVersion -ChildPath "$($_.Name).yml") -Force
 
             $nodeRsopWithSource = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -IncludeSource
-            $nodeRsopWithSource | ConvertTo-Json -Depth 40 | ConvertFrom-Json | Convertto-Yaml -OutFile (Join-Path -Path $rsopWithSourceOutputPathVersion -ChildPath "$($_.Name).yml") -Force
+            $nodeRsopWithSource | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path -Path $rsopWithSourceOutputPathVersion -ChildPath "$($_.Name).yml") -Force
         }
     }
     else

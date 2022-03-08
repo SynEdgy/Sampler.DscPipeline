@@ -13,7 +13,7 @@ param
     [Parameter()]
     # Base directory of all output (default to 'output')
     [System.String]
-    $OutputDirectory = (property OutputDirectory (Join-Path $BuildRoot 'output')),
+    $OutputDirectory = (property OutputDirectory (Join-Path -Path $BuildRoot -ChildPath output)),
 
     [Parameter()]
     [string]
@@ -77,7 +77,7 @@ task CompileRootMetaMof {
             Write-Build Green "Successfully compiled $($metaMofs.Count) Meta MOF files."
             if ($cd.AllNodes.Count -ne $metaMofs.Count)
             {
-                Write-Warning 'Compiled Meta MOF file count <> node count'
+                Write-Warning -Message 'Compiled Meta MOF file count <> node count'
             }
 
             Write-Build Green "Successfully compiled $($metaMofs.Count) Meta MOF files."
