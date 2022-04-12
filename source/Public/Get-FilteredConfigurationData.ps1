@@ -26,7 +26,14 @@ function Get-FilteredConfigurationData
         $Filter = {}
     }
 
-    $allDatumNodes = [System.Collections.Hashtable[]]@(Get-DatumNodesRecursive -AllDatumNodes $Datum.AllNodes)
+    try
+    {
+        $allDatumNodes = [System.Collections.Hashtable[]]@(Get-DatumNodesRecursive -AllDatumNodes $Datum.AllNodes -ErrorAction Stop)
+    }
+    catch
+    {
+        Write-Error -Message "Could not get datum nodes. Pretty likely there is a syntax error in one of the node's yaml definitions." -Exception $_.Exception
+    }
     $totalNodeCount = $allDatumNodes.Count
 
     Write-Verbose -Message "Node count: $($allDatumNodes.Count)"
