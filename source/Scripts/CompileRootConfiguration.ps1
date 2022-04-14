@@ -12,6 +12,9 @@ if (-not $environment)
     $environment = 'NA'
 }
 
+#Compiling MOF from RSOP cache
+$rsopCache = Get-DatumRsopCache
+
 <#
 This information is taken from build.yaml
 
@@ -28,49 +31,50 @@ if (-not $BuildInfo.'Sampler.DscPipeline')
 }
 if (-not $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules)
 {
-    Write-Error "There are no modules to import defined in the 'build.yml'. Expected the element 'Sampler.DscPipeline'.DscCompositeResourceModules"
+    Write-Error -Message "There are no modules to import defined in the 'build.yml'. Expected the element 'Sampler.DscPipeline'.DscCompositeResourceModules"
 }
 if ($BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules.Count -lt 1)
 {
-    Write-Error "There are no modules to import defined in the 'build.yml'. Expected at least one module defined under 'Sampler.DscPipeline'.DscCompositeResourceModules"
+    Write-Error -Message "There are no modules to import defined in the 'build.yml'. Expected at least one module defined under 'Sampler.DscPipeline'.DscCompositeResourceModules"
 }
 
-Write-Host "RootConfiguration will import these composite resource modules as defined in 'build.yaml':"
+Write-Host -Object "RootConfiguration will import these composite resource modules as defined in 'build.yaml':"
 $importStatements = foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules)
 {
     if ($module -is [hashtable])
     {
-        Write-Host "`t- $($module.Name) ($($module.Version))"
+        Write-Host -Object "`t- $($module.Name) ($($module.Version))"
         "Import-DscResource -ModuleName $($module.Name) -ModuleVersion $($module.Version)`n"
     }
     else
     {
-        Write-Host "`t- $module"
+        Write-Host -Object "`t- $module"
         "Import-DscResource -ModuleName $module`n"
     }
 }
-Write-Host
+
+Write-Host -Object ''
 
 $rootConfiguration = Get-Content -Path $PSScriptRoot\RootConfiguration.ps1 -Raw
 $rootConfiguration = $rootConfiguration -replace '#<importStatements>', $importStatements
 
 Invoke-Expression -Command $rootConfiguration
 
-$cd = @{}
-$cd.Datum = $ConfigurationData.Datum
+$configData = @{}
+$configData.Datum = $ConfigurationData.Datum
 
-foreach ($node in $configurationData.AllNodes)
+foreach ($node in $rsopCache.GetEnumerator())
 {
-    $cd.AllNodes = @($ConfigurationData.AllNodes | Where-Object NodeName -EQ $node.NodeName)
+    $configData.AllNodes = @([hashtable]$node.Value)
     try
     {
-        $path = Join-Path -Path MOF -ChildPath $node.Environment
-        RootConfiguration -ConfigurationData $cd -OutputPath (Join-Path -Path $BuildOutput -ChildPath $path)
+        $path = Join-Path -Path MOF -ChildPath $node.Value.Environment
+        RootConfiguration -ConfigurationData $configData -OutputPath (Join-Path -Path $BuildOutput -ChildPath $path)
     }
     catch
     {
-        Write-Host "Error occured during compilation of node '$($node.NodeName)' : $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host -Object "Error occured during compilation of node '$($node.NodeName)' : $($_.Exception.Message)" -ForegroundColor Red
         $relevantErrors = $Error | Where-Object Exception -IsNot [System.Management.Automation.ItemNotFoundException]
-        Write-Host ($relevantErrors[0..2] | Out-String) -ForegroundColor Red
+        Write-Host -Object ($relevantErrors[0..2] | Out-String) -ForegroundColor Red
     }
 }

@@ -2,9 +2,22 @@ Import-Module DscBuildHelpers
 
 [DscLocalConfigurationManager()]
 Configuration RootMetaMOF {
-    Node $ConfigurationData.AllNodes.GetEnumerator().NodeName {
 
-        $lcmConfig = Resolve-NodeProperty -PropertyPath LcmConfig\Settings -Node $Node -DefaultValue $null
+    #Compiling Meta MOF from RSOP cache
+    $rsopCache = Get-DatumRsopCache
+
+    Node $ConfigurationData.AllNodes.NodeName {
+
+        $lcmConfigKeyName = $datum.__Definition.DscLocalConfigurationManagerKeyName
+        $clonedProperties = $rsopCache."$($Node.Name)".$lcmConfigKeyName
+
+        if (-not $clonedProperties)
+        {
+            Write-Error "LCM configuration key not found for node $($Node.Name). You can define one in the 'datum.yml' using the key 'DscLocalConfigurationManagerKeyName'." -ErrorAction Stop
+        }
+
+        $lcmConfig = $clonedProperties.Settings
+
         #If the Nodename is a GUID, use Config ID instead Named config, as per SMB Pull requirements
         if ($Node.Nodename -as [Guid])
         {
@@ -12,17 +25,17 @@ Configuration RootMetaMOF {
         }
         (Get-DscSplattedResource -ResourceName Settings -ExecutionName '' -Properties $lcmConfig -NoInvoke).Invoke($lcmConfig)
 
-        if ($configurationRepositoryShare = Resolve-NodeProperty -PropertyPath 'LcmConfig\ConfigurationRepositoryShare' -Node $Node -DefaultValue $null)
+        if ($configurationRepositoryShare = $clonedProperties.ConfigurationRepositoryShare)
         {
             (Get-DscSplattedResource -ResourceName ConfigurationRepositoryShare -ExecutionName ConfigurationRepositoryShare -Properties $configurationRepositoryShare -NoInvoke).Invoke($configurationRepositoryShare)
         }
 
-        if ($resourceRepositoryShare = Resolve-NodeProperty -PropertyPath 'LcmConfig\ResourceRepositoryShare' -Node $Node -DefaultValue $null)
+        if ($resourceRepositoryShare = $clonedProperties.ResourceRepositoryShare)
         {
             (Get-DscSplattedResource -ResourceName ResourceRepositoryShare -ExecutionName ResourceRepositoryShare -Properties $resourceRepositoryShare -NoInvoke).Invoke($resourceRepositoryShare)
         }
 
-        if ($configurationRepositoryWeb = Resolve-NodeProperty -PropertyPath 'LcmConfig\ConfigurationRepositoryWeb' -Node $Node -DefaultValue $null)
+        if ($configurationRepositoryWeb = $clonedProperties.ConfigurationRepositoryWeb)
         {
             foreach ($configRepoName in $configurationRepositoryWeb.Keys)
             {
@@ -30,7 +43,7 @@ Configuration RootMetaMOF {
             }
         }
 
-        if ($resourceRepositoryWeb = Resolve-NodeProperty -PropertyPath 'LcmConfig\ResourceRepositoryWeb' -Node $Node -DefaultValue $null)
+        if ($resourceRepositoryWeb = $clonedProperties.ResourceRepositoryWeb)
         {
             foreach ($resourceRepoName in $resourceRepositoryWeb.Keys)
             {
@@ -38,12 +51,12 @@ Configuration RootMetaMOF {
             }
         }
 
-        if ($reportServerWeb = Resolve-NodeProperty -PropertyPath 'LcmConfig\ReportServerWeb' -Node $Node -DefaultValue $null)
+        if ($reportServerWeb = $clonedProperties.ReportServerWeb)
         {
             (Get-DscSplattedResource -ResourceName ReportServerWeb -ExecutionName ReportServerWeb -Properties $reportServerWeb -NoInvoke).Invoke($reportServerWeb)
         }
 
-        if ($partialConfiguration = Resolve-NodeProperty -PropertyPath 'LcmConfig\PartialConfiguration' -Node $Node -DefaultValue $null)
+        if ($partialConfiguration = $clonedProperties.PartialConfiguration)
         {
             foreach ($partialConfigurationName in $partialConfiguration.Keys)
             {

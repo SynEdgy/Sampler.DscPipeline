@@ -67,6 +67,9 @@ task CompressModulesWithChecksum {
         $modulesWithDscResources = $allModules | Where-Object Name -In $modulesWithDscResources
         #TODO: be more selective and maybe check based on the MOFs (but that's a lot of MOF to parse)
 
+        # As outlined here: https://docs.microsoft.com/en-us/dotnet/api/system.io.compression.zipfile?view=net-6.0#remarks
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+
         foreach ($module in $modulesWithDscResources)
         {
             $destinationPath = Join-Path -Path $CompressedModulesFolder -ChildPath "$($module.Name)_$($module.Version).zip"
