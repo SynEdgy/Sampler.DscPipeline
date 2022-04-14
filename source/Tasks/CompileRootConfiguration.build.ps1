@@ -17,6 +17,10 @@ param
 
     [Parameter()]
     [string]
+    $RequiredModulesDirectory = (property RequiredModulesDirectory 'RequiredModules'),
+
+    [Parameter()]
+    [string]
     $DatumConfigDataDirectory = (property DatumConfigDataDirectory 'source'),
 
     [Parameter()]
@@ -38,8 +42,13 @@ param
 )
 
 task CompileRootConfiguration {
-
     . Set-SamplerTaskVariable -AsNewBuild
+
+    $RequiredModulesDirectory = Get-SamplerAbsolutePath -Path $RequiredModulesDirectory -RelativeTo $OutputDirectory
+
+    Write-Build DarkGray 'Reading DSC Resource metadata for supporting CIM based DSC parameters...'
+    Initialize-DscResourceMetaInfo -ModulePath $RequiredModulesDirectory
+    Write-Build DarkGray 'Done'
 
     $MofOutputFolder = Get-SamplerAbsolutePath -Path $MofOutputFolder -RelativeTo $OutputDirectory
 
