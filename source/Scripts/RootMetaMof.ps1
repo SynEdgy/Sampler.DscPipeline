@@ -3,6 +3,7 @@ Import-Module DscBuildHelpers
 [DscLocalConfigurationManager()]
 Configuration RootMetaMOF {
 
+    #Compiling Meta MOF from RSOP cache
     $rsopCache = Get-DatumRsopCache
 
     Node $ConfigurationData.AllNodes.NodeName {

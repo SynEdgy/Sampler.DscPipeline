@@ -2,6 +2,7 @@ configuration RootConfiguration
 {
     #<importStatements>
 
+    #Compiling MOF from RSOP cache
     $rsopCache = Get-DatumRsopCache
 
     $module = Get-Module -Name PSDesiredStateConfiguration

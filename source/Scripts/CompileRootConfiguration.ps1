@@ -12,6 +12,7 @@ if (-not $environment)
     $environment = 'NA'
 }
 
+#Compiling MOF from RSOP cache
 $rsopCache = Get-DatumRsopCache
 
 <#
@@ -51,23 +52,24 @@ $importStatements = foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscComp
         "Import-DscResource -ModuleName $module`n"
     }
 }
-Write-Host
+
+Write-Host -Object ''
 
 $rootConfiguration = Get-Content -Path $PSScriptRoot\RootConfiguration.ps1 -Raw
 $rootConfiguration = $rootConfiguration -replace '#<importStatements>', $importStatements
 
 Invoke-Expression -Command $rootConfiguration
 
-$cd = @{}
-$cd.Datum = $ConfigurationData.Datum
+$configData = @{}
+$configData.Datum = $ConfigurationData.Datum
 
 foreach ($node in $rsopCache.GetEnumerator())
 {
-    $cd.AllNodes = @([hashtable]$node.Value)
+    $configData.AllNodes = @([hashtable]$node.Value)
     try
     {
         $path = Join-Path -Path MOF -ChildPath $node.Value.Environment
-        RootConfiguration -ConfigurationData $cd -OutputPath (Join-Path -Path $BuildOutput -ChildPath $path)
+        RootConfiguration -ConfigurationData $configData -OutputPath (Join-Path -Path $BuildOutput -ChildPath $path)
     }
     catch
     {

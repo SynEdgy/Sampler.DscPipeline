@@ -34,6 +34,7 @@ task CompileRootMetaMof {
 
     $MetaMofOutputFolder = Get-SamplerAbsolutePath -Path $MetaMofOutputFolder -RelativeTo $OutputDirectory
 
+    #Compiling Meta MOF from RSOP cache
     $rsopCache = Get-DatumRsopCache
 
     $cd = @{}
