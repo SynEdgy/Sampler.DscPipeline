@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- RequiredModules attribute in PSD1 which cause to broke dependencies with new version of that modules
+
 ### Added
 
 - Adding pipeline tasks and commands from DSC Workshop.
