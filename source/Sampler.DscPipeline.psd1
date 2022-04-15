@@ -42,13 +42,6 @@
     # Processor architecture (None, X86, Amd64) required by this module
     # ProcessorArchitecture = ''
 
-    # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules = @(
-        'Plaster'
-        'Sampler'
-        'DscBuildHelpers'
-    )
-
     # Assemblies that must be loaded prior to importing this module
     # RequiredAssemblies = @()
 
