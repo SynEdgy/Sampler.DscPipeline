@@ -20,3 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added error handling discovering 'CompileRootConfiguration.ps1' and 'RootMetaMof.ps1'
 - Test cases updated to Pester 5.
 - Fixing issue with ZipFile class not being present
+
+### Fixed
+
+- Fixed regex for commit message `--Added new node`
+- Fixed task `Compress_Artifact_Collections` fails when node is filtered

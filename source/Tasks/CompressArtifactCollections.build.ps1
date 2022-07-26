@@ -70,5 +70,8 @@ Task Compress_Artifact_Collections {
     Compress-Archive -Path $MofOutputFolder -DestinationPath $MOFZip -Force
     Compress-Archive -Path $MetaMofOutputFolder -DestinationPath $MetaMOFZip -Force
     Compress-Archive -Path $RsopFolder -DestinationPath $RSOPZip -Force
-    Compress-Archive -Path $CompressedModulesFolder -DestinationPath $CompressedModulesZip -Force
+    if ($SkipCompressedModulesBuild -eq $false)
+    {
+        Compress-Archive -Path $CompressedModulesFolder -DestinationPath $CompressedModulesZip -Force
+    }
 }
