@@ -24,3 +24,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed regex for commit message `--Added new node`
+- Fixed task `Compress_Artifact_Collections` fails when node is filtered
