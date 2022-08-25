@@ -37,7 +37,10 @@ param
 
     [Parameter()]
     [string]
-    $ModuleVersion = (property ModuleVersion '')
+    $ModuleVersion = (property ModuleVersion ''),
+
+    [switch]
+    $UseEnvironment = (property UseEnvironment $false)
 )
 
 task CompileDatumRsop {
@@ -76,15 +79,29 @@ task CompileDatumRsop {
         Write-Build Green "Generating RSOP output for $($configurationData.AllNodes.Count) nodes."
         $configurationData.AllNodes.Where({ $_['Name'] -ne '*' }) | ForEach-Object -Process {
             Write-Build Green "`tBuilding RSOP for $($_['Name'])..."
+            $outPath = $rsopOutputPathVersion
+            if ($UseEnvironment.IsPresent)
+            {
+                $outPath = Join-Path -Path $rsopOutputPathVersion -ChildPath "$($_['Environment'])"
+                $null = New-Item -ItemType Directory -Path $outPath -Force
+            }
+
+            $outPathSource = $rsopWithSourceOutputPathVersion
+            if ($UseEnvironment.IsPresent)
+            {
+                $outPathSource = Join-Path -Path $rsopWithSourceOutputPathVersion -ChildPath "$($_['Environment'])"
+                $null = New-Item -ItemType Directory -Path $outPathSource -Force
+            }
+
             $nodeRsop = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -RemoveSource
-            $nodeRsop | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path -Path $rsopOutputPathVersion -ChildPath "$($_.Name).yml") -Force
+            $nodeRsop | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path $outPath "$($_.Name).yml") -Force
 
             $nodeRsopWithSource = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -IncludeSource
-            $nodeRsopWithSource | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path -Path $rsopWithSourceOutputPathVersion -ChildPath "$($_.Name).yml") -Force
+            $nodeRsopWithSource | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path $outPathSource "$($_.Name).yml") -Force
         }
     }
     else
     {
-        Write-Build Green 'No data for generating RSOP output.'
+        Write-Build Green "No data for generating RSOP output."
     }
 }
