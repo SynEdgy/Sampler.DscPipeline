@@ -39,32 +39,45 @@ if ($BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules.Count -lt 1)
 }
 
 Write-Host -Object "RootConfiguration will import these composite resource modules as defined in 'build.yaml':"
-$importStatements = foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules)
+foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules)
 {
     if ($module -is [hashtable])
     {
         Write-Host -Object "`t- $($module.Name) ($($module.Version))"
-        "Import-DscResource -ModuleName $($module.Name) -ModuleVersion $($module.Version)`n"
     }
     else
     {
         Write-Host -Object "`t- $module"
-        "Import-DscResource -ModuleName $module`n"
     }
 }
 
+Write-Host -Object "Preloading available resources"
+$availableResources = Get-DscResource
+
 Write-Host -Object ''
-
-$rootConfiguration = Get-Content -Path $PSScriptRoot\RootConfiguration.ps1 -Raw
-$rootConfiguration = $rootConfiguration -replace '#<importStatements>', $importStatements
-
-Invoke-Expression -Command $rootConfiguration
 
 $configData = @{}
 $configData.Datum = $ConfigurationData.Datum
 
 foreach ($node in $rsopCache.GetEnumerator())
 {
+    $importStatements = foreach ($configurationItem in $node.Value.Configurations)
+    {
+        $resource = $availableResources.Where({$_.Name -eq $configurationItem})
+        if ($null -eq $resource)
+        {
+            Write-Debug -Message "No DSC resource found for configuration $configurationItem"
+            continue
+        }
+
+        "Import-DscResource -ModuleName $($resource.ModuleName) -ModuleVersion $($resource.Version) -Name $($resource.Name)`n"
+    }
+
+    $rootConfiguration = Get-Content -Path $PSScriptRoot\RootConfiguration.ps1 -Raw
+    $rootConfiguration = $rootConfiguration -replace '#<importStatements>', ($importStatements | Select-Object -Unique)
+
+    Invoke-Expression -Command $rootConfiguration
+
     $configData.AllNodes = @([hashtable]$node.Value)
     try
     {
