@@ -39,6 +39,7 @@ param
     [string]
     $ModuleVersion = (property ModuleVersion ''),
 
+    [Parameter()]
     [switch]
     $UseEnvironment = (property UseEnvironment $false)
 )
@@ -80,28 +81,28 @@ task CompileDatumRsop {
         $configurationData.AllNodes.Where({ $_['Name'] -ne '*' }) | ForEach-Object -Process {
             Write-Build Green "`tBuilding RSOP for $($_['Name'])..."
             $outPath = $rsopOutputPathVersion
-            if ($UseEnvironment.IsPresent)
-            {
-                $outPath = Join-Path -Path $rsopOutputPathVersion -ChildPath "$($_['Environment'])"
-                $null = New-Item -ItemType Directory -Path $outPath -Force
-            }
-
-            $outPathSource = $rsopWithSourceOutputPathVersion
-            if ($UseEnvironment.IsPresent)
-            {
-                $outPathSource = Join-Path -Path $rsopWithSourceOutputPathVersion -ChildPath "$($_['Environment'])"
-                $null = New-Item -ItemType Directory -Path $outPathSource -Force
-            }
 
             $nodeRsop = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -RemoveSource
-            $nodeRsop | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path $outPath "$($_.Name).yml") -Force
-
             $nodeRsopWithSource = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -IncludeSource
-            $nodeRsopWithSource | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path $outPathSource "$($_.Name).yml") -Force
+
+            if ($UseEnvironment.IsPresent)
+            {
+                $finalRsopOutputPathVersion = Join-Path -Path $rsopOutputPathVersion -ChildPath $nodeRsop.Environment
+                $finalRsopWithSourceOutputPathVersion = Join-Path -Path $rsopWithSourceOutputPathVersion -ChildPath $nodeRsop.Environment
+                $null = New-Item -ItemType Directory -Path $finalRsopOutputPathVersion, $finalRsopWithSourceOutputPathVersion -Force
+            }
+            else
+            {
+                $finalRsopOutputPathVersion = $rsopOutputPathVersion
+                $finalRsopWithSourceOutputPathVersion = $rsopWithSourceOutputPathVersion
+            }
+
+            $nodeRsop | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path -Path $finalRsopOutputPathVersion -ChildPath "$($nodeRsop.NodeName).yml") -Force
+            $nodeRsopWithSource | ConvertTo-Json -Depth 40 | ConvertFrom-Json | ConvertTo-Yaml -OutFile (Join-Path -Path $finalRsopWithSourceOutputPathVersion -ChildPath "$($nodeRsop.NodeName).yml") -Force
         }
     }
     else
     {
-        Write-Build Green "No data for generating RSOP output."
+        Write-Build Green 'No data for generating RSOP output.'
     }
 }
