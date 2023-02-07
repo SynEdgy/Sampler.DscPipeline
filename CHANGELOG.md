@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test cases updated to Pester 5.
 - Fixing issue with ZipFile class not being present
 - Added ''UseEnvironment'' parameter to cater for RSOP for identical node names in different environments
+- Adding home.md to wikiSource.
 
 ### Fixed
 
