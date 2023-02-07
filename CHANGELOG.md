@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixing issue with ZipFile class not being present
 - Increase build speed of root configuration by only importing required Composites/Resources
 - Added ''UseEnvironment'' parameter to cater for RSOP for identical node names in different environments
+- Adding home.md to wikiSource.
 
 ### Fixed
 
