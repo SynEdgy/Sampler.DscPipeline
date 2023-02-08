@@ -59,6 +59,11 @@ Write-Host -Object ''
 $configData = @{}
 $configData.Datum = $ConfigurationData.Datum
 
+# Save the current PSModulePath to reset it at the end of MOF build for each node.
+# In some circumstances the MOF compilation manipulates the PSModulePath and 
+# are the cause of duplicate CIM class definition errors on the following nodes. 
+$curPSModulePath = $env:PSModulePath
+
 foreach ($node in $rsopCache.GetEnumerator())
 {
     $importStatements = foreach ($configurationItem in $node.Value.Configurations)
@@ -89,5 +94,10 @@ foreach ($node in $rsopCache.GetEnumerator())
         Write-Host -Object "Error occured during compilation of node '$($node.NodeName)' : $($_.Exception.Message)" -ForegroundColor Red
         $relevantErrors = $Error | Where-Object Exception -IsNot [System.Management.Automation.ItemNotFoundException]
         Write-Host -Object ($relevantErrors[0..2] | Out-String) -ForegroundColor Red
+    }
+    finally
+    {
+        # reset PSModulePath to original value to reset changes by MOF compilation
+        $env:PSModulePath = $curPSModulePath
     }
 }
