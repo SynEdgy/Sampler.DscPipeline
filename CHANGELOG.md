@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added error handling discovering 'CompileRootConfiguration.ps1' and 'RootMetaMof.ps1'
 - Test cases updated to Pester 5.
 - Fixing issue with ZipFile class not being present
+- Fixing calculation of checksum if attribute NodeName is different to attribute Name (of YAML file)
 - Increase build speed of root configuration by only importing required Composites/Resources
 - Added ''UseEnvironment'' parameter to cater for RSOP for identical node names in different environments
 - Adding Home.md to wikiSource and correct casing.
