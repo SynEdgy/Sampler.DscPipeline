@@ -60,13 +60,6 @@ task CompileRootConfiguration {
     Start-Transcript -Path "$BuildOutput\Logs\CompileRootConfiguration.log"
     try
     {
-        $originalPSModulePath = $env:PSModulePath
-        $env:PSModulePath = ($env:PSModulePath -split [System.IO.Path]::PathSeparator).Where({
-                $_ -notmatch ([regex]::Escape('powershell\7\Modules')) -and
-                $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
-                $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
-            }) -join [System.IO.Path]::PathSeparator
-
         Write-Build Green ''
         if ((Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1)) -and
         (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath CompileRootConfiguration.ps1)))
@@ -101,7 +94,6 @@ task CompileRootConfiguration {
     }
     finally
     {
-        $env:PSModulePath = $originalPSModulePath
         Stop-Transcript
     }
 

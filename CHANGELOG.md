@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase build speed of root configuration by only importing required Composites/Resources
 - Added ''UseEnvironment'' parameter to cater for RSOP for identical node names in different environments
 - Adding Home.md to wikiSource and correct casing.
+- Removed PSModulePath manipulation from task `CompileRootConfiguration.build.ps1`. This is now handled by the Sampler task `Set_PSModulePath`.
 
 ### Fixed
 
