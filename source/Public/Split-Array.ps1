@@ -2,18 +2,22 @@ function Split-Array
 {
     param (
         [Parameter(Mandatory = $true)]
-        [System.Collections.IEnumerable]$List,
+        [System.Collections.IEnumerable]
+        $List,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'MaxChunkSize')]
         [Alias('ChunkSize')]
-        [int]$MaxChunkSize,
+        [int]
+        $MaxChunkSize,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'ChunkCount')]
         [ValidateRange(2, [long]::MaxValue)]
-        [int]$ChunkCount,
+        [int]
+        $ChunkCount,
 
         [Parameter()]
-        [switch]$AllowEmptyChunks
+        [switch]
+        $AllowEmptyChunks
     )
 
     if (-not $AllowEmptyChunks -and ($list.Count -lt $ChunkCount))
