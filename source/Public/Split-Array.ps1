@@ -1,41 +1,44 @@
 function Split-Array
 {
-    param
-    (
+    param(
         [Parameter(Mandatory = $true)]
-        [System.Collections.IEnumerable]
-        $List,
+        [System.Collections.IEnumerable]$List,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'ChunkSize')]
-        [int]
-        $ChunkSize,
+        [Parameter(Mandatory = $true, ParameterSetName = 'MaxChunkSize')]
+        [Alias('ChunkSize')]
+        [int]$MaxChunkSize,
 
+        [ValidateRange(2, [long]::MaxValue)]
         [Parameter(Mandatory = $true, ParameterSetName = 'ChunkCount')]
-        [int]
-        $ChunkCount
+        [int]$ChunkCount,
+
+        [switch]$AllowEmptyChunks
     )
 
-    $aggregateList = @()
-
-    if ($ChunkCount)
+    if (-not $AllowEmptyChunks -and ($list.Count -lt $ChunkCount))
     {
-        $ChunkSize = [Math]::Ceiling($List.Count / $ChunkCount)
+        Write-Error "List count ($($List.Count)) is smaller than ChunkCount ($ChunkCount).)"
+        return
     }
 
-    $blocks = [Math]::Floor($List.Count / $ChunkSize)
-    $leftOver = $List.Count % $ChunkSize
-    for ($i = 0; $i -lt $blocks; $i++)
+    if ($PSCmdlet.ParameterSetName -eq 'MaxChunkSize')
     {
-        $end = $ChunkSize * ($i + 1) - 1
-
-        $aggregateList += @(, $List[$start..$end])
-        $start = $end + 1
+        $ChunkCount = [Math]::Ceiling($List.Count / $MaxChunkSize)
+    }
+    $containers = foreach ($i in 1..$ChunkCount)
+    {
+        New-Object System.Collections.Generic.List[object]
     }
 
-    if ($leftOver -gt 0)
+    $iContainer = 0
+    foreach ($item in $List)
     {
-        $aggregateList += @(, $List[$start..($end + $leftOver)])
+        $containers[$iContainer].Add($item)
+        $iContainer++
+        if ($iContainer -ge $ChunkCount) {
+            $iContainer = 0
+        }
     }
 
-    , $aggregateList
+    $containers
 }
