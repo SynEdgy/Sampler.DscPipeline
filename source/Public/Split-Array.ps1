@@ -8,10 +8,11 @@ function Split-Array
         [Alias('ChunkSize')]
         [int]$MaxChunkSize,
 
-        [ValidateRange(2, [long]::MaxValue)]
         [Parameter(Mandatory = $true, ParameterSetName = 'ChunkCount')]
+        [ValidateRange(2, [long]::MaxValue)]
         [int]$ChunkCount,
 
+        [Parameter()]
         [switch]$AllowEmptyChunks
     )
 
@@ -35,7 +36,8 @@ function Split-Array
     {
         $containers[$iContainer].Add($item)
         $iContainer++
-        if ($iContainer -ge $ChunkCount) {
+        if ($iContainer -ge $ChunkCount)
+        {
             $iContainer = 0
         }
     }
