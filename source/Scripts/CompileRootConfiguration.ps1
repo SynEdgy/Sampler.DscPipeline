@@ -51,13 +51,20 @@ foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules
     }
 }
 
+Write-Host -Object ''
 Write-Host -Object "Preloading available resources"
+
 $availableResources = Get-DscResource
 
 Write-Host -Object ''
 
 $configData = @{}
 $configData.Datum = $ConfigurationData.Datum
+
+if (-not $rsopCache)
+{
+    Write-Error -Message "No RSOP cache found. The task 'CompileDatumRsop' must be run before this task."
+}
 
 foreach ($node in $rsopCache.GetEnumerator())
 {
@@ -88,6 +95,9 @@ foreach ($node in $rsopCache.GetEnumerator())
     {
         Write-Host -Object "Error occured during compilation of node '$($node.NodeName)' : $($_.Exception.Message)" -ForegroundColor Red
         $relevantErrors = $Error | Where-Object Exception -IsNot [System.Management.Automation.ItemNotFoundException]
-        Write-Host -Object ($relevantErrors[0..2] | Out-String) -ForegroundColor Red
+        foreach ($relevantError in ($relevantErrors | Select-Object -First 3))
+        {
+            Write-Error -ErrorRecord $relevantError
+        }
     }
 }
