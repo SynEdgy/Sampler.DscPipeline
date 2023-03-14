@@ -1,6 +1,6 @@
 function Split-Array
 {
-    param(
+    param (
         [Parameter(Mandatory = $true)]
         [System.Collections.IEnumerable]$List,
 
