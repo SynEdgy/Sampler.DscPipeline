@@ -13,7 +13,7 @@ param
     [Parameter()]
     # Base directory of all output (default to 'output')
     [System.String]
-    $OutputDirectory = (property OutputDirectory (Join-Path -Path  $BuildRoot -ChildPath output)),
+    $OutputDirectory = (property OutputDirectory (Join-Path -Path $BuildRoot -ChildPath output)),
 
     [Parameter()]
     [string]
@@ -85,12 +85,16 @@ task CompileRootConfiguration {
     }
     catch
     {
-        Write-Build Red "ERROR OCCURED DURING COMPILATION: $($_.Exception.Message)"
+        Write-Build Red 'Error(s) occured during the compilation. Details will be shown below'
+
         $relevantErrors = $Error | Where-Object -FilterScript {
             $_.Exception -isnot [System.Management.Automation.ItemNotFoundException]
         }
 
-        $relevantErrors[0..2] | Out-String | ForEach-Object { Write-Warning -Message $_ }
+        foreach ($relevantError in ($relevantErrors | Select-Object -First 3))
+        {
+            Write-Error -ErrorRecord $relevantError
+        }
     }
     finally
     {
