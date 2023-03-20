@@ -55,7 +55,7 @@ function Get-FilteredConfigurationData
     {
         $allDatumNodes = Split-Array -List $allDatumNodes -ChunkCount $TotalJobCount
     }
-    $allDatumNodes = $allDatumNodes[$CurrentJobNumber]
+    $allDatumNodes = @($allDatumNodes[$CurrentJobNumber])
 
     return @{
         AllNodes = $allDatumNodes
