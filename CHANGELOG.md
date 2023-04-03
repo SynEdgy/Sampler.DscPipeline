@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding Home.md to wikiSource and correct casing.
 - Redesign of the function Split-Array. Most of the time it was not working as expected, especially when requesting larger ChunkCounts (see AutomatedLab/AutomatedLab.Common/#118).
 - Improved error handling when compiling MOF files and when calling 'Get-DscResource'.
+- Redesign of the function 'Split-Array'. Most of the time it was not working as expected, especially when requesting larger ChunkCounts (see AutomatedLab/AutomatedLab.Common/#118).
+- Improved error handling when compiling MOF files.
 
 ### Fixed
 

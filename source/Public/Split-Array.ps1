@@ -22,7 +22,7 @@ function Split-Array
 
     if (-not $AllowEmptyChunks -and ($list.Count -lt $ChunkCount))
     {
-        Write-Error "List count ($($List.Count)) is smaller than ChunkCount ($ChunkCount).)"
+        Write-Error "List count ($($List.Count)) is smaller than ChunkCount ($ChunkCount)."
         return
     }
 
