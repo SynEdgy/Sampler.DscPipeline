@@ -51,8 +51,18 @@ function Get-FilteredConfigurationData
     }
 
     $CurrentJobNumber--
-    $allDatumNodes = Split-Array -List $allDatumNodes -ChunkCount $TotalJobCount
-    $allDatumNodes = $allDatumNodes[$CurrentJobNumber]
+    if ($TotalJobCount -gt 1)
+    {
+        try
+        {
+            $allDatumNodes = Split-Array -List $allDatumNodes -ChunkCount $TotalJobCount -ErrorAction Stop
+        }
+        catch
+        {
+            Write-Error -Exception $_.Exception -Message "Error calling 'Split-Array': $($_.Exception.Message). Please make sure the 'TotalJobCount' is not greater than the number of nodes." -ErrorAction Stop
+        }
+        $allDatumNodes = @($allDatumNodes[$CurrentJobNumber].ToArray())
+    }
 
     return @{
         AllNodes = $allDatumNodes

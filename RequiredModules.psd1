@@ -7,7 +7,6 @@
         }
     }
 
-    'Powershell-yaml'           = 'latest'
     InvokeBuild                 = 'latest'
     PSScriptAnalyzer            = 'latest'
     Pester                      = 'latest'

@@ -19,13 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   on top of the file 'CompileRootConfiguration.ps1'.
 - Added error handling discovering 'CompileRootConfiguration.ps1' and 'RootMetaMof.ps1'
 - Test cases updated to Pester 5.
-- Fixing issue with ZipFile class not being present
-- Fixing calculation of checksum if attribute NodeName is different to attribute Name (of YAML file)
-- Increase build speed of root configuration by only importing required Composites/Resources
-- Added ''UseEnvironment'' parameter to cater for RSOP for identical node names in different environments
+- Fixing issue with ZipFile class not being present.
+- Fixing calculation of checksum if attribute NodeName is different to attribute Name (of YAML file).
+- Increase build speed of root configuration by only importing required Composites/Resources.
+- Added ''UseEnvironment'' parameter to cater for RSOP for identical node names in different environments.
 - Adding Home.md to wikiSource and correct casing.
 - Removed PSModulePath manipulation from task `CompileRootConfiguration.build.ps1`. This is now handled by the Sampler task `Set_PSModulePath`.
 - Redesign of the function Split-Array. Most of the time it was not working as expected, especially when requesting larger ChunkCounts (see AutomatedLab/AutomatedLab.Common/#118)
+- Redesign of the function Split-Array. Most of the time it was not working as expected, especially when requesting larger ChunkCounts (see AutomatedLab/AutomatedLab.Common/#118).
+- Improved error handling when compiling MOF files and when calling 'Get-DscResource'.
+- Redesign of the function 'Split-Array'. Most of the time it was not working as expected, especially when requesting larger ChunkCounts (see AutomatedLab/AutomatedLab.Common/#118).
 - Improved error handling when compiling MOF files.
 
 ### Fixed

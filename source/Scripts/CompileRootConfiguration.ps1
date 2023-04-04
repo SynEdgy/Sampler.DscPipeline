@@ -52,9 +52,36 @@ foreach ($module in $BuildInfo.'Sampler.DscPipeline'.DscCompositeResourceModules
 }
 
 Write-Host -Object ''
-Write-Host -Object "Preloading available resources"
+Write-Host -Object 'Preloading available resources'
 
-$availableResources = Get-DscResource
+# An emptu path in the PSModulePath causes an error when loading DSC resources. Only then the PSModulePath is modified to remove the empty path.
+# If you want to remove 'Program Files' or 'Documents' from the PSModulePath, please add the Sampler task 'Set_PsModulePath' to the task sequence.
+if ($env:PSModulePath -like '*;;*')
+{
+    $previousPSModulePath = $env:PSModulePath
+    $env:PSModulePath = $env:PSModulePath -replace "$([System.IO.Path]::PathSeparator)$([System.IO.Path]::PathSeparator)", [System.IO.Path]::PathSeparator
+}
+
+try
+{
+    $availableResources = Get-DscResource
+}
+catch
+{
+    if ($_.Exception -is [System.Management.Automation.ParameterBindingException] -and $_.Exception.ParameterName -eq 'Path')
+    {
+        Write-Error -Message "There was error while loading DSC resources because the 'PSModulePath' contained a path that does not exist. The error was: $($_.Exception.Message)" -Exception $_.Exception
+    }
+    else
+    {
+        Write-Error -Message "There was error while loading DSC resources. The error was: $($_.Exception.Message)" -Exception $_.Exception
+    }
+}
+
+if ($previousPSModulePath)
+{
+    $env:PSModulePath = $previousPSModulePath
+}
 
 Write-Host -Object ''
 
@@ -70,10 +97,10 @@ foreach ($node in $rsopCache.GetEnumerator())
 {
     $importStatements = foreach ($configurationItem in $node.Value.Configurations)
     {
-        $resource = $availableResources.Where({$_.Name -eq $configurationItem})
+        $resource = $availableResources.Where({ $_.Name -eq $configurationItem })
         if ($null -eq $resource)
         {
-            Write-Debug -Message "No DSC resource found for configuration $configurationItem"
+            Write-Debug -Message "No DSC resource found for configuration '$configurationItem'"
             continue
         }
 
