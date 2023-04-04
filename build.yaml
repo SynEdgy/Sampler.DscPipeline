@@ -7,27 +7,15 @@ CopyPaths:
   - en-US
   - Tasks
   - Scripts
-  # - Modules
 Encoding: UTF8
 suffix: suffix.ps1
-# Can be used to manually specify module's semantic version if the preferred method of
-# using GitVersion is not available, and it is not possible to set the session environment
-# variable `$env:ModuleVersion`, nor setting the variable `$ModuleVersion`, in the
-# PowerShell session (parent scope) before running the task `build`.
-#SemVer: '99.0.0-preview1'
-
 VersionedOutputDirectory: true
 
 ####################################################
 #      ModuleBuilder Submodules Configuration      #
 ####################################################
 
-# NestedModule:
-#     DscResource.Common:
-#       CopyOnly: true
-#       Path: ./output/RequiredModules/DscResource.Common
-#       AddToManifest: false
-#       Exclude: PSGetModuleInfo.xml
+# not needed
 
 ####################################################
 #       Sampler Pipeline Configuration             #
@@ -45,21 +33,16 @@ BuildWorkflow:
     - Generate_Conceptual_Help
     - Generate_Wiki_Content
 
+  pack:
+    - build
+    - package_module_nupkg
+
   hqrmtest:
     - Invoke_HQRM_Tests_Stop_On_Fail
 
-  # Defining test task to be run when invoking `./build.ps1 -Tasks test`
   test:
     - Pester_Tests_Stop_On_Fail
-    # Use this task if pipeline uses code coverage and the module is using the
-    # pattern of Public, Private, Enum, Classes.
-    #- Convert_Pester_Coverage
     - Pester_if_Code_Coverage_Under_Threshold
-
-  # Use this task when you have multiple parallel tests, which produce multiple
-  # code coverage files and needs to get merged into one file.
-  #merge:
-    #- Merge_CodeCoverage_Files
 
   publish:
     - publish_module_to_gallery
@@ -105,10 +88,6 @@ DscTest:
     ExcludeModuleFile:
     MainGitBranch: main
 
-# Import ModuleBuilder tasks from a specific PowerShell module using the build
-# task's alias. Wildcard * can be used to specify all tasks that has a similar
-# prefix and or suffix. The module contain the task must be added as a required
-# module in the file RequiredModules.psd1.
 ModuleBuildTasks:
   Sampler:
     - '*.build.Sampler.ib.tasks'
