@@ -25,7 +25,7 @@ task NewMofChecksums {
 
     $MofOutputFolder = Get-SamplerAbsolutePath -Path $MofOutputFolder -RelativeTo $OutputDirectory
 
-    $mofs = Get-ChildItem -Path $MofOutputFolder -File -Recurse -ErrorAction SilentlyContinue
+    $mofs = Get-ChildItem -Path $MofOutputFolder -Filter *.mof -File -Recurse -ErrorAction SilentlyContinue
     foreach ($mof in $mofs)
     {
         New-DscChecksum -Path $mof.FullName -Verbose:$false -Force
