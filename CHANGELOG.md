@@ -31,8 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redesign of the function 'Split-Array'. Most of the time it was not working as expected, especially when requesting larger ChunkCounts (see AutomatedLab/AutomatedLab.Common/#118).
 - Improved error handling when compiling MOF files.
 - Removed name check when creating Meta MOF files.
+- The Datum PR gaelcolas/datum#144 requires `Get-DatumNodesRecursive` to look for note properties
+  instead if script properties.
 
 ### Fixed
 
-- Fixed regex for commit message `--Added new node`
-- Fixed task `Compress_Artifact_Collections` fails when node is filtered
+- Fixed regex for commit message `--Added new node`.
+- Fixed task `Compress_Artifact_Collections` fails when node is filtered.
+- Fixes loading issues by doing a retry in `LoadDatumConfigData`.
