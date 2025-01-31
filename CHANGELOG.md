@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Updated build scripts to latest Sampler version.
+
+## [0.2.0] - 2024-11-09
+
+### Added
+
 - Adding pipeline tasks and commands from DSC Workshop.
 - Small changes to support easier deployment for individual environments.
 - Added scripts for compiling MOF and Meta MOF files without the need for the `rootConfig.ps1` script. It is now a self-contained task that takes parameters from the `Build.yml`.
