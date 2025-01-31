@@ -23,4 +23,6 @@
     'DscResource.DocGenerator'  = 'latest'
     Datum                       = 'latest'
     DscBuildHelpers             = 'latest'
+    PlatyPS                     = 'latest'
+
 }
