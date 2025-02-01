@@ -1,0 +1,16 @@
+Configurations:
+- AddsDomainController
+
+AddsDomainController:
+  DomainName: '[x={ $Datum.Global.Domain.DomainFqdn }=]'
+  Credential: '[x={ $Datum.Global.Domain.DomainJoinCredentials }=]'
+  SafeModeAdministratorPassword: '[x={ $Datum.Global.Domain.DomainJoinCredentials }=]'
+  DatabasePath: C:\Windows\NTDS
+  LogPath: C:\Windows\Logs
+  SysvolPath: C:\Windows\SYSVOL
+  SiteName: Default-First-Site-Name
+  IsGlobalCatalog: True
+
+DscTagging:
+  Layers:
+    - '[x={ Get-DatumSourceFile -Path $File } =]'
