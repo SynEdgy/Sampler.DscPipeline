@@ -22,7 +22,10 @@
     xDSCResourceDesigner        = 'latest'
     'DscResource.DocGenerator'  = 'latest'
     Datum                       = 'latest'
+    'Datum.ProtectedData'       = 'latest'
+    'Datum.InvokeCommand'       = 'latest'
     DscBuildHelpers             = 'latest'
+    ProtectedData               = 'latest'
     PlatyPS                     = 'latest'
 
 }
