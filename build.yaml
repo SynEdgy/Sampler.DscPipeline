@@ -65,7 +65,8 @@ Pester:
   Configuration:
     Run:
       Path:
-        - tests/Unit
+        - tests/QA
+        - tests/Integration
     Output:
       Verbosity: Detailed
       StackTraceVerbosity: Full
