@@ -1,0 +1,11 @@
+Configurations:
+  - FileSystemObjects
+
+FileSystemObjects:
+  Items:
+    - DestinationPath: '[x= "C:\Test\$($File.BaseName)" =]'
+      Type: Directory
+
+DscTagging:
+  Layers:
+    - '[x={ Get-DatumSourceFile -Path $File } =]'

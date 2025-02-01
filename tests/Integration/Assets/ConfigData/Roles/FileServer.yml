@@ -1,0 +1,42 @@
+Configurations:
+  - FileSystemObjects
+  - RegistryValues
+
+WindowsFeatures:
+  Names:
+    - File-Services
+
+FileSystemObjects:
+  Items:
+    - DestinationPath: C:\Test
+      Type: Directory
+    - DestinationPath: C:\Test\Test1File1.txt
+      Type: File
+      Contents: Some test data
+      DependsOn: '[FileSystemObject]FileSystemObject_C__Test'
+    - DestinationPath: C:\Test\Test1File2.txt
+      Type: File
+      Contents: Some test data
+      DependsOn: '[FileSystemObject]FileSystemObject_C__Test'
+    - DestinationPath: C:\GpoBackup
+      #SourcePath: '[x= "\\DSCDC01\SYSVOL\$($Datum.Global.Domain.DomainFqdn)\Policies" =]'
+      SourcePath: C:\Windows\Media
+      Type: Directory
+
+RegistryValues:
+  Values:
+    - Key: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W32Time\Parameters
+      ValueName: NtpServer
+      ValueData: pool.ntp.org,0x9
+      ValueType: String
+      Ensure: Present
+      Force: true
+  DependsOn: '[FileSystemObjects]FileSystemObjects'
+
+SecurityBaseline:
+  Role: FileServer
+  DependsOn: '[RegistryValues]RegistryValues'
+
+DscTagging:
+  Layers:
+    - '[x={ Get-DatumSourceFile -Path $File } =]'

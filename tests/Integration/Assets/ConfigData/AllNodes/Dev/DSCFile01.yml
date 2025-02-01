@@ -1,0 +1,34 @@
+NodeName: '[x={ $Node.Name }=]'
+Environment: Dev
+Role: FileServer
+Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
+Location: Frankfurt
+Baseline: Server
+
+ComputerSettings:
+  Name: '[x={ $Node.NodeName }=]'
+  Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
+
+NetworkIpConfiguration:
+  Interfaces:
+    - InterfaceAlias: DscWorkshop 0
+      IpAddress: 192.168.111.100
+
+PSDscAllowPlainTextPassword: True
+PSDscAllowDomainUser: True
+
+LcmConfig:
+  ConfigurationRepositoryWeb:
+    Server:
+      ConfigurationNames: '[x={ $Node.NodeName }=]'
+
+DscTagging:
+  Layers:
+    - '[x={ Get-DatumSourceFile -Path $File } =]'
+  NodeVersion: '[x={ $datum.Baselines.DscLcm.DscTagging.Version } =]'
+  NodeRole: '[x={ $Node.Role } =]'
+
+FileSystemObjects:
+  Items:
+    - DestinationPath: Z:\DoesNotWork
+      Type: Directory

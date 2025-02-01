@@ -1,0 +1,80 @@
+Configurations:
+  - WindowsServices
+  - RegistryValues
+  - FileSystemObjects
+  - WebApplicationPools
+  - WebApplications
+
+FileSystemObjects:
+  Items:
+    - DestinationPath: C:\Inetpub\TestApp1
+      Type: Directory
+    - DestinationPath: C:\Inetpub\TestApp2
+      Type: Directory
+    - DestinationPath: C:\Inetpub\TestApp1\default.html
+      Type: File
+      Contents: This is TestApp1
+      DependsOn: '[FileSystemObject]FileSystemObject_C__Inetpub_TestApp1'
+    - DestinationPath: C:\Inetpub\TestApp2\default.html
+      Type: File
+      Contents: This is TestApp2
+      DependsOn: '[FileSystemObject]FileSystemObject_C__Inetpub_TestApp2'
+
+WebApplicationPools:
+  Items:
+    - Name: TestAppPool1
+      Ensure: Present
+      IdentityType: ApplicationPoolIdentity
+      State: Started
+    - Name: TestAppPool2
+      Ensure: Present
+      IdentityType: ApplicationPoolIdentity
+      State: Started
+      DependsOn: '[WebAppPool]TestAppPool1'
+  DependsOn:
+    - '[FileSystemObjects]FileSystemObjects'
+    - '[WindowsFeatures]WindowsFeatures'
+
+WebApplications:
+  Items:
+    - Name: TestApp1
+      PhysicalPath: C:\Inetpub\TestApp1
+      WebAppPool: TestAppPool1
+      Website: Default Web Site
+      Ensure: Present
+    - Name: TestApp2
+      PhysicalPath: C:\Inetpub\TestApp2
+      WebAppPool: TestAppPool2
+      Website: Default Web Site
+      Ensure: Present
+      DependsOn: '[WebApplication]webapp_TestApp1'
+  DependsOn: '[WebApplicationPools]WebApplicationPools'
+
+RegistryValues:
+  Values:
+    - Key: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W32Time\Parameters
+      ValueName: NtpServer
+      ValueData: time.windows.com,0x9;
+      ValueType: String
+      Ensure: Present
+      Force: true
+  DependsOn: '[WebApplications]WebApplications'
+
+SecurityBase:
+  Role: WebServer
+
+WindowsFeatures:
+  Names:
+  - +Web-Server
+  - -WoW64-Support
+
+WindowsServices:
+  Services:
+    - Name: FileDummy
+      DisplayName: Dummy Service on Web Servers
+      StartupType: Automatic
+      Path: C:\DummyService.exe
+  DependsOn: '[RegistryValues]RegistryValues'
+DscTagging:
+  Layers:
+    - '[x={ Get-DatumSourceFile -Path $File } =]'
