@@ -2,7 +2,6 @@
 ####################################################
 #          ModuleBuilder Configuration             #
 ####################################################
-
 CopyPaths:
   - en-US
   - Tasks
@@ -11,14 +10,18 @@ Encoding: UTF8
 suffix: suffix.ps1
 VersionedOutputDirectory: true
 
-####################################################
-#      ModuleBuilder Submodules Configuration      #
-####################################################
+ModuleBuildTasks:
+  Sampler:
+    - '*.build.Sampler.ib.tasks'
+  Sampler.GitHubTasks:
+    - '*.ib.tasks'
+  DscResource.DocGenerator:
+    - 'Task.*'
+  DscResource.Test:
+    - 'Task.*'
 
-# not needed
-
 ####################################################
-#       Sampler Pipeline Configuration             #
+#             Pipeline Configuration               #
 ####################################################
 BuildWorkflow:
   '.':
@@ -58,29 +61,29 @@ BuildWorkflow:
     - Create_ChangeLog_GitHub_PR
 
 ####################################################
-#       PESTER  Configuration                      #
+#          Pester Configuration (Sampler)          #
 ####################################################
-
 Pester:
   Configuration:
     Run:
       Path:
-        - tests/QA
         - tests/Integration
     Output:
       Verbosity: Detailed
       StackTraceVerbosity: Full
       CIFormat: Auto
     CodeCoverage:
-      CoveragePercentTarget: 0
+      CoveragePercentTarget: 10
       OutputPath: JaCoCo_coverage.xml
       OutputEncoding: ascii
       UseBreakpoints: false
     TestResult:
       OutputFormat: NUnitXML
       OutputEncoding: ascii
-  # Sampler pipeline configuration
 
+####################################################
+#      Pester Configuration (DscResource.Test)     #
+####################################################
 DscTest:
   Pester:
     Configuration:
@@ -89,22 +92,17 @@ DscTest:
           - "Common Tests - New Error-Level Script Analyzer Rules"
       Output:
         Verbosity: Detailed
+        CIFormat: Auto
+      TestResult:
+        Enabled: true
+        OutputFormat: NUnitXML
+        OutputEncoding: ascii
+        OutputPath: ./output/testResults/NUnitXml_HQRM_Tests.xml
   Script:
     ExcludeSourceFile:
       - output
-      # Deprecated resources
     ExcludeModuleFile:
     MainGitBranch: main
-
-ModuleBuildTasks:
-  Sampler:
-    - '*.build.Sampler.ib.tasks'
-  Sampler.GitHubTasks:
-    - '*.ib.tasks'
-  DscResource.DocGenerator:
-    - 'Task.*'
-  DscResource.Test:
-    - 'Task.*'
 
 # Invoke-Build Header to be used to 'decorate' the terminal output of the tasks.
 TaskHeader: |
@@ -118,6 +116,9 @@ TaskHeader: |
   Write-Build DarkGray "  $($Task.InvocationInfo.ScriptName):$($Task.InvocationInfo.ScriptLineNumber)"
   ""
 
+####################################################
+#               GitHub Configuration               #
+####################################################
 GitHubConfig:
   GitHubFilesToAdd:
     - 'CHANGELOG.md'
