@@ -107,10 +107,10 @@ stages:
 
           - task: PowerShell@2
             name: test
-            displayName: 'Run Unit Test'
+            displayName: Run Unit Test
             inputs:
-              filePath: './build.ps1'
-              arguments: "-Tasks test -PesterScript 'tests/Unit'"
+              filePath: ./build.ps1
+              arguments: -Tasks test
               pwsh: true
 
           - task: PublishTestResults@2
