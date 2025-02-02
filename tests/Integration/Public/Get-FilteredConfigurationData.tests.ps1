@@ -16,7 +16,7 @@ BeforeAll {
     }
 }
 
-Describe 'Get-DscResourceProperty Tests' -Tags FunctionalQuality {
+Describe "'Get-DscResourceProperty' Tests" -Tags FunctionalQuality {
 
     It "'Get-FilteredConfigurationData' returns data" {
 
