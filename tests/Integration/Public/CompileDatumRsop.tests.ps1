@@ -6,7 +6,6 @@ BeforeAll {
     $datumPath = (Resolve-Path $ProjectPath\tests\Integration\Assets\ConfigData\Datum.yml).Path
 
     $datum = New-DatumStructure -DefinitionFile $datumPath
-    $datum.AllNodes.Dev.DSCFile01 | Out-String | Write-Host
     $environments = $datum.AllNodes | Get-Member -MemberType ScriptProperty | Select-Object -ExpandProperty Name
     $allNodes = foreach ($environment in $environments)
     {
