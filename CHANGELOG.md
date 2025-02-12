@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integration tests for 'CompileDatumRsop' task.
 - Integration tests for 'Get-DscResourceProperty' function.
 
+### Fixed
+
+- Fix parsing of UseEnvironment parameter in CompileDatumRsop task ([#39](https://github.com/SynEdgy/Sampler.DscPipeline/issues/39))
+
 ## [0.2.0] - 2024-11-09
 
 ### Added

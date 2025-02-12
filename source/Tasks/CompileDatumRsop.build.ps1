@@ -41,7 +41,7 @@ param
 
     [Parameter()]
     [switch]
-    $UseEnvironment = (property UseEnvironment $false)
+    $UseEnvironment = ([bool]::Parse((property UseEnvironment $false)))
 )
 
 task CompileDatumRsop {
