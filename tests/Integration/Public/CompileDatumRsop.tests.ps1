@@ -72,8 +72,6 @@ Describe "'CompileDatumRsop' Tests" -Tags FunctionalQuality {
 
     It "'CompileDatumRsop' created same stores the RSOP files in the correct environment subfolder when UseEnvironment environment variable is set to '`$true'" {
 
-        Set-ItResult -Skipped -Because 'This will be fixed in a future release'
-
         $env:UseEnvironment = $true
         Invoke-Build -File $BuiltModuleBase\Tasks\CompileDatumRsop.build.ps1 -Task CompileDatumRsop -DatumConfigDataDirectory $configDataDirectory
 
@@ -89,8 +87,6 @@ Describe "'CompileDatumRsop' Tests" -Tags FunctionalQuality {
     }
 
     It "'CompileDatumRsop' created same stores the RSOP files in the correct environment subfolder when UseEnvironment environment variable is set to 'true'" {
-
-        Set-ItResult -Skipped -Because 'This will be fixed in a future release'
 
         $env:UseEnvironment = 'True'
         Invoke-Build -File $BuiltModuleBase\Tasks\CompileDatumRsop.build.ps1 -Task CompileDatumRsop -DatumConfigDataDirectory $configDataDirectory
