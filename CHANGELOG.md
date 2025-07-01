@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integration tests for 'LoadDatumConfigData' task.
 - Integration tests for 'CompileDatumRsop' task.
 - Integration tests for 'Get-DscResourceProperty' function.
+- Added error handling and debug output for 'LoadDatumConfigData'.
 
 ### Fixed
 

@@ -62,6 +62,13 @@ task LoadDatumConfigData {
         Filter           = $Filter
     }
 
+    Write-Build DarkGray "Loading configuration data with the following parameters:"
+    Write-Build DarkGray "  CurrentJobNumber: $($getFilteredConfigurationDataParams.CurrentJobNumber)"
+    Write-Build DarkGray "  TotalJobCount: $($getFilteredConfigurationDataParams.TotalJobCount)"
+    Write-Build DarkGray "  Filter: $($getFilteredConfigurationDataParams.Filter)"
+    Write-Build DarkGray "  DatumConfigDataDirectory: $DatumConfigDataDirectory"
+    Write-Build DarkGray ''
+
     if ($message = (&git log -1) -and $message -match "--Added new node '(?<NodeName>(\w|\.|-)+)'")
     {
         $global:Filter = $Filter = [scriptblock]::Create('$_.NodeName -eq "{0}"' -f $Matches.NodeName)
@@ -70,5 +77,17 @@ task LoadDatumConfigData {
         $getFilteredConfigurationDataParams['Filter'] = $Filter
     }
 
+    try
+    {
+        $global:configurationData = Get-FilteredConfigurationData @getFilteredConfigurationDataParams
+    }
+    catch
+    {
+        Write-Warning "'Get-FilteredConfigurationData' could not load any configuration data. Retrying..."
+        Start-Sleep -Seconds 1
+    }
+
+    # When using PowerShell 7+, the first call to 'Get-FilteredConfigurationData' fails usually.
     $global:configurationData = Get-FilteredConfigurationData @getFilteredConfigurationDataParams
+
 }
