@@ -98,9 +98,9 @@ foreach ($node in $rsopCache.GetEnumerator())
     $importStatements = foreach ($configurationItem in $node.Value.Configurations)
     {
         $resource = $availableResources.Where({ $_.Name -eq $configurationItem })
-        if ($null -eq $resource)
+        if ($null -eq $resource -or $resource.Count -eq 0)
         {
-            Write-Debug -Message "No DSC resource found for configuration '$configurationItem'"
+            Write-Error -Message "The DSC resource '$configurationItem' was not found in any DSC resource module." -ErrorAction Stop
             continue
         }
 
