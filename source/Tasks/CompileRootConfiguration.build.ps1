@@ -46,9 +46,11 @@ task CompileRootConfiguration {
 
     $RequiredModulesDirectory = Get-SamplerAbsolutePath -Path $RequiredModulesDirectory -RelativeTo $OutputDirectory
 
+    $previousPSModulePath = $env:PSModulePath
     Write-Build DarkGray 'Reading DSC Resource metadata for supporting CIM based DSC parameters...'
     Initialize-DscResourceMetaInfo -ModulePath $RequiredModulesDirectory
     Write-Build DarkGray 'Done'
+    $env:PSModulePath = $previousPSModulePath
 
     $MofOutputFolder = Get-SamplerAbsolutePath -Path $MofOutputFolder -RelativeTo $OutputDirectory
 
