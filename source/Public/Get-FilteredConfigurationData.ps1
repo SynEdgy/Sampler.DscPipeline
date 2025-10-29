@@ -41,6 +41,10 @@ function Get-FilteredConfigurationData
     if ($Filter.ToString() -ne {}.ToString())
     {
         Write-Verbose -Message "Filter: $($Filter.ToString())"
+
+        #Make the hashtables case-insensitive to prevent issues with the filter.
+        $allDatumNodes = $allDatumNodes.ForEach({ @{} + $_})
+
         $allDatumNodes = [System.Collections.Hashtable[]]$allDatumNodes.Where($Filter)
         Write-Verbose -Message "Node count after applying filter: $($allDatumNodes.Count)"
     }
