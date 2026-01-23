@@ -1,3 +1,4 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingCmdletAliases', '', Justification = 'Required for DSL-like look of function calls')]
 param
 (
     # Project path
