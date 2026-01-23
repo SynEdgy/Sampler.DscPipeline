@@ -1,3 +1,7 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingCmdletAliases', '', Justification = 'Required for DSL-like look of function calls')]
+
+param ()
+
 task TestDscResources {
     Write-Build Yellow "Not implemented yet. We don't separate Composites from Resources or build dependencies anymore."
     return

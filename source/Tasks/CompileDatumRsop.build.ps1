@@ -1,3 +1,4 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingCmdletAliases', '', Justification = 'Required for DSL-like look of function calls')]
 param
 (
     # Project path
@@ -80,7 +81,6 @@ task CompileDatumRsop {
         Write-Build Green "Generating RSOP output for $($configurationData.AllNodes.Count) nodes."
         $configurationData.AllNodes.Where({ $_['Name'] -ne '*' }) | ForEach-Object -Process {
             Write-Build Green "`tBuilding RSOP for $($_['Name'])..."
-            $outPath = $rsopOutputPathVersion
 
             $nodeRsop = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -RemoveSource
             $nodeRsopWithSource = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -IncludeSource
