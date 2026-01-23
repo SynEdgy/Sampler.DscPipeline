@@ -1,5 +1,7 @@
 configuration RootConfiguration
 {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Required for UI display')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Justification = 'Required for dynamic configuration compilation')]
     #<importStatements>
 
     #Compiling MOF from RSOP cache
@@ -7,8 +9,11 @@ configuration RootConfiguration
 
     $module = Get-Module -Name PSDesiredStateConfiguration
     & $module {
-        param(
+        param (
+            [Parameter()]
             [string]$BuildVersion,
+
+            [Parameter()]
             [string]$Environment
         )
         $Script:PSTopConfigurationName = "MOF_$($Environment)_$($BuildVersion)"

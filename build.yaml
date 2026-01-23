@@ -89,7 +89,7 @@ DscTest:
     Configuration:
       Filter:
         ExcludeTag:
-          - "Common Tests - New Error-Level Script Analyzer Rules"
+          - RequiredPSSA
       Output:
         Verbosity: Detailed
         CIFormat: Auto
