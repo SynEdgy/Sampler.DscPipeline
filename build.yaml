@@ -89,7 +89,7 @@ DscTest:
     Configuration:
       Filter:
         ExcludeTag:
-          - RequiredPSSA
+          - AllowSuppressMessageAttribute
       Output:
         Verbosity: Detailed
         CIFormat: Auto
