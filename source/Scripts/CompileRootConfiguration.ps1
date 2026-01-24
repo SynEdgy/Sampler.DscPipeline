@@ -109,6 +109,10 @@ foreach ($node in $rsopCache.GetEnumerator())
             Write-Error -Message "The DSC resource '$configurationItem' was not found in any DSC resource module." -ErrorAction Stop
             continue
         }
+        if ($resource.Count -gt 1)
+        {
+            Write-Error -Message "The DSC resource '$configurationItem' was found in multiple DSC resource modules. Unable to determine which one to import." -ErrorAction Stop
+        }
 
         "Import-DscResource -ModuleName $($resource.ModuleName) -ModuleVersion $($resource.Version) -Name $($resource.Name)`n"
     }
