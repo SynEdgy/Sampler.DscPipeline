@@ -32,7 +32,7 @@ function Get-FilteredConfigurationData
     }
     catch
     {
-        Write-Error -Message "Could not get datum nodes. Pretty likely there is a syntax error in one of the node's yaml definitions." -Exception $_.Exception
+        Write-Error -Message "Could not get datum nodes. Pretty likely there is a syntax error in one of the node's yaml definitions. The error reported was: $($_.Exception.Message)" -Exception $_.Exception
     }
     $totalNodeCount = $allDatumNodes.Count
 
@@ -41,6 +41,10 @@ function Get-FilteredConfigurationData
     if ($Filter.ToString() -ne {}.ToString())
     {
         Write-Verbose -Message "Filter: $($Filter.ToString())"
+
+        #Make the hashtables case-insensitive to prevent issues with the filter.
+        $allDatumNodes = $allDatumNodes.ForEach({ @{} + $_})
+
         $allDatumNodes = [System.Collections.Hashtable[]]$allDatumNodes.Where($Filter)
         Write-Verbose -Message "Node count after applying filter: $($allDatumNodes.Count)"
     }

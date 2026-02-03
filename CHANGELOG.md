@@ -18,12 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix parsing of `UseEnvironment` parameter in `CompileDatumRsop` task ([#39](https://github.com/SynEdgy/Sampler.DscPipeline/issues/39)).
 - Fixed `Initialize-DscResourceMetaInfo` changed the module path and broke DSC builds in PowerShell 7 / PSDesiredStateConfiguration 2.0.7 (Fixes #43) by saving and restoring the `PSModulePath`.
 - Fixed error handling in case a DSC resource could not be loaded.
+- Fixed node filtering by making hashtable case-insensitive ([#49](https://github.com/SynEdgy/Sampler.DscPipeline/issues/49)).
+- Fixed error handling in case a DSC resource could not be loaded or is defined in multiple resources.
 - Changes for HQRM compliance.
   - Removed parameter attribute in `Scripts\RootConfiguration.ps1` to fix ([#52](https://github.com/SynEdgy/Sampler.DscPipeline/issues/52)).
 
 ### Changed
 
 - Comment out `Publish_GitHub_Wiki_Content` in the publish workflow as it doesn't work now and this project doesn't have a wiki.
+- Improved error handling to report the yaml file in case it cannot be processed ([#47](https://github.com/SynEdgy/Sampler.DscPipeline/issues/47)).
 
 ## [0.2.0] - 2024-11-09
 
