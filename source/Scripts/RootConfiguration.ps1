@@ -10,10 +10,8 @@ configuration RootConfiguration
     $module = Get-Module -Name PSDesiredStateConfiguration
     & $module {
         param (
-            [Parameter()]
             [string]$BuildVersion,
 
-            [Parameter()]
             [string]$Environment
         )
         $Script:PSTopConfigurationName = "MOF_$($Environment)_$($BuildVersion)"
