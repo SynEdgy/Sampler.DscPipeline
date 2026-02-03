@@ -2,6 +2,7 @@ configuration RootConfiguration
 {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Required for UI display')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Justification = 'Required for dynamic configuration compilation')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('DscResource.AnalyzerRules\Measure-ParameterBlockParameterAttribute', '', Justification = 'Not a DSC resource, parameters are passed to internal script block')]
     #<importStatements>
 
     #Compiling MOF from RSOP cache
